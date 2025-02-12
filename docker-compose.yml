@@ -1,0 +1,10 @@
+version: "3.3"
+services:
+  pomogator:
+    image: dmitriynazarov/pomogator:1.0.1
+    ports:
+      - 5600:5600
+    volumes:
+      - ./files:/files
+      - ./logs:/logs
+
