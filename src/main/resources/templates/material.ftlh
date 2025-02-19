@@ -507,7 +507,7 @@
                                                                 </v:roundrect>
                                                                 <![endif]-->
                                                                 <!--[if !mso]>
-                                                                <!---->
+                                                                -->
                                                                 <a href="${link_sait}"
                                                                    style="line-height: 16px; font-size: 16px !important; display: inline-block; border-radius: 8px; -webkit-border-radius: 8px; -moz-border-radius: 8px; color: #ffffff; text-decoration: none; font-weight: bold; font-family: Helvetica, Arial, sans-serif; text-align: center; height: 100%; width: auto; background: #e05704 repeat center center; padding: 8px 20px;">Перейти
                                                                     на сатй</a>
@@ -532,7 +532,7 @@
                                                                      src='https://app.makemail.ru/content/8d009e4c4c994a52e407bfa1c5d9d08b.png'
                                                                      width='148'>
                                                                 <![endif]-->
-                                                                <!--[if !mso]> <!---->
+                                                                <!--[if !mso]> -->
                                                                 <img alt="Лого.png" class="left" height="56"
                                                                      src="https://app.makemail.ru/content/8d009e4c4c994a52e407bfa1c5d9d08b.png"
                                                                      style="width: 148px; height: 56px; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; max-width: 100%; float: left; clear: both; display: block;"

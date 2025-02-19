@@ -1,5 +1,6 @@
 package ru.clapClass.servise.s3;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,13 +12,16 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 
 @Service
 public class ServiceS3 {
     @Value("${BUCKET}")
     private String BUCKET;
+
 
     private final S3Client s3Client;
 
@@ -66,19 +70,103 @@ public class ServiceS3 {
         }
     }
 
-    public PutObjectResponse putObject(String key, MultipartFile file) throws IOException {
-        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                .bucket(BUCKET)
-                .key(key)
-                .contentType(file.getContentType())
-                .build();
-        return s3Client.putObject(putObjectRequest, RequestBody.fromBytes(file.getBytes()));
+//
+
+    public void putObject(String key, MultipartFile file) throws IOException {
+        File scratchFile = File.createTempFile("prefix", "suffix");
+        InputStream fileUpload= null;
+        try {
+            fileUpload = file.getInputStream();
+            FileUtils.copyInputStreamToFile(file.getInputStream(), scratchFile);
+
+            var body = RequestBody.fromInputStream(fileUpload, scratchFile.length());
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(BUCKET)
+                    .key(key)
+                    .contentType(file.getContentType())
+                    .build();
+            s3Client.putObject(putObjectRequest, body);
+        } finally {
+            if (scratchFile.exists()) {
+                scratchFile.deleteOnExit();
+            }
+            assert fileUpload != null;
+            fileUpload.close();
+        }
     }
 
-    public Object deleteObject(String key, String file) {
+//        public void putObject(String key, MultipartFile file) throws IOException {
+//        System.out.println(11111111);
+//        File scratchFile = File.createTempFile("prefix", "suffix");
+//        InputStream fileUpload = file.getInputStream();
+//        try {
+//            FileUtils.copyInputStreamToFile(fileUpload, scratchFile);
+//            System.out.println(scratchFile);
+//            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+//                    .bucket(BUCKET)
+//                    .key(key)
+//                    .contentType(file.getContentType())
+//                    .build();
+//               s3Client.putObject(putObjectRequest, file.getInputStream() );
+//
+//
+//             var body = RequestBody.fromBytes(file.getBytes());
+//
+//          PutObjectRequest putObjectRequest = new PutObjectRequest(BUCKET);
+//           s3Client.putObject(putObjectRequest, fileUpload);
+//           s3Client.putObject(putObjectRequest, RequestBody.fromFile(scratchFile));
+//        } finally {
+//            if (scratchFile.exists()) {
+//                scratchFile.deleteOnExit();
+//            }
+//        }
+
+
+//        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+//                .bucket(BUCKET)
+//                .key(key)
+//                .contentType(file.getContentType())
+//                .build();
+//      var fie22=  new File(Objects.requireNonNull(file.getOriginalFilename())).createNewFile();
+//       var body = RequestBody.fromBytes(file.getBytes());
+//       var  body =  RequestBody.fromBytes(file.getBytes());
+//        FileInputStream fileUpload = (FileInputStream) file.getInputStream();
+//
+//        try {
+//            s3Client.putObject(putObjectRequest, (Path) fileUpload);
+//        } finally {
+//            putObjectRequest = null;
+//            body = null;
+//        }
+//}
+
+    public void uploadss(String key, MultipartFile file) throws IOException {
+        File scratchFile = File.createTempFile("prefix", "suffix");
+        try {
+            InputStream fileUpload = file.getInputStream();
+            FileUtils.copyInputStreamToFile(file.getInputStream(), scratchFile);
+            System.out.println(scratchFile);
+
+            System.out.println(scratchFile.length());
+            var body = RequestBody.fromInputStream(fileUpload, scratchFile.length());
+            System.out.println(body);
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(BUCKET)
+                    .key(key)
+                    .contentType(file.getContentType())
+                    .build();
+            s3Client.putObject(putObjectRequest, body);
+        } finally {
+            if (scratchFile.exists()) {
+                scratchFile.deleteOnExit();
+            }
+        }
+    }
+
+    public void deleteObject(String key) {
         DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
                 .bucket(BUCKET).key(key).build();
 
-        return s3Client.deleteObject(deleteObjectRequest);
+        s3Client.deleteObject(deleteObjectRequest);
     }
 }

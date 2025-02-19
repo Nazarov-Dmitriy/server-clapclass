@@ -3,7 +3,7 @@ package ru.clapClass.utils;
 import java.io.File;
 
 public class FolderCreate {
-    private final static String[] listFolder = {"files", "files/user", "files/reviews", "files/article"};
+    private final static String[] listFolder = {"files", "files/reviews"};
 
     static public void createFolder(String folderPath) {
         File directory = new File(folderPath);

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru">
 <head>
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
     <meta content="width=device-width" name="viewport">
@@ -11,21 +11,6 @@
             -ms-text-size-adjust: 100%;
             margin: 0;
             padding: 0;
-        }
-
-        .ExternalClass {
-            width: 100%;
-        }
-
-        .ExternalClass {
-            line-height: 100%;
-        }
-
-        #backgroundTable {
-            margin: 0;
-            padding: 0;
-            width: 100% !important;
-            line-height: 100% !important;
         }
 
         body {
@@ -139,21 +124,6 @@
                 width: 580px !important;
             }
 
-            .mail .hide-for-desktop {
-                display: none !important;
-            }
-
-            .mail .hide-and-true {
-                display: none !important;
-            }
-
-            .mail .hide-and-false {
-                display: block !important;
-            }
-
-            .mail .hide-or-true {
-                display: none !important;
-            }
         }
 
         @media only screen and (max-width: 600px) {
@@ -166,10 +136,6 @@
             }
 
             .mail .social img {
-                width: inherit !important;
-            }
-
-            .mail img.normal {
                 width: inherit !important;
             }
 
@@ -195,25 +161,12 @@
                 table-layout: fixed !important;
                 float: none !important;
                 width: 100% !important;
-                padding-right: 0px !important;
-                padding-left: 0px !important;
-                display: block !important;
-            }
-
-            .mail .column {
-                table-layout: fixed !important;
-                float: none !important;
-                width: 100% !important;
-                padding-right: 0px !important;
-                padding-left: 0px !important;
+                padding-right: 0 !important;
+                padding-left: 0 !important;
                 display: block !important;
             }
 
             .mail .wrapper.first .columns {
-                display: table !important;
-            }
-
-            .mail .wrapper.first .column {
                 display: table !important;
             }
 
@@ -229,217 +182,13 @@
                 padding-right: 0 !important;
             }
 
-            .mail .columns td.one {
-                width: 8.333333% !important;
-            }
-
-            .mail .column td.one {
-                width: 8.333333% !important;
-            }
-
-            .mail .columns td.two {
-                width: 16.666666% !important;
-            }
-
-            .mail .column td.two {
-                width: 16.666666% !important;
-            }
-
-            .mail .columns td.three {
-                width: 25% !important;
-            }
-
-            .mail .column td.three {
-                width: 25% !important;
-            }
-
-            .mail .columns td.four {
-                width: 33.333333% !important;
-            }
-
-            .mail .column td.four {
-                width: 33.333333% !important;
-            }
-
-            .mail .columns td.five {
-                width: 41.666666% !important;
-            }
-
-            .mail .column td.five {
-                width: 41.666666% !important;
-            }
-
-            .mail .columns td.six {
-                width: 50% !important;
-            }
-
-            .mail .column td.six {
-                width: 50% !important;
-            }
-
-            .mail .columns td.seven {
-                width: 58.333333% !important;
-            }
-
-            .mail .column td.seven {
-                width: 58.333333% !important;
-            }
-
-            .mail .columns td.eight {
-                width: 66.666666% !important;
-            }
-
-            .mail .column td.eight {
-                width: 66.666666% !important;
-            }
-
-            .mail .columns td.nine {
-                width: 75% !important;
-            }
-
-            .mail .column td.nine {
-                width: 75% !important;
-            }
-
-            .mail .columns td.ten {
-                width: 83.333333% !important;
-            }
-
-            .mail .column td.ten {
-                width: 83.333333% !important;
-            }
-
-            .mail .columns td.eleven {
-                width: 91.666666% !important;
-            }
-
-            .mail .column td.eleven {
-                width: 91.666666% !important;
-            }
-
-            .mail .columns td.twelve {
-                width: 100% !important;
-            }
-
-            .mail .column td.twelve {
-                width: 100% !important;
-            }
-
-            .mail td.offset-by-eleven {
-                padding-left: 0 !important;
-            }
-
-            .mail td.offset-by-ten {
-                padding-left: 0 !important;
-            }
-
-            .mail td.offset-by-nine {
-                padding-left: 0 !important;
-            }
-
-            .mail td.offset-by-eight {
-                padding-left: 0 !important;
-            }
-
-            .mail td.offset-by-seven {
-                padding-left: 0 !important;
-            }
-
-            .mail td.offset-by-six {
-                padding-left: 0 !important;
-            }
-
-            .mail td.offset-by-five {
-                padding-left: 0 !important;
-            }
-
-            .mail td.offset-by-four {
-                padding-left: 0 !important;
-            }
-
-            .mail td.offset-by-three {
-                padding-left: 0 !important;
-            }
-
-            .mail td.offset-by-two {
-                padding-left: 0 !important;
-            }
-
-            .mail td.offset-by-one {
-                padding-left: 0 !important;
-            }
-
             .mail table.columns td.expander {
                 width: 1px !important;
             }
 
-            .mail .right-text-pad {
-                padding-left: 10px !important;
-            }
-
-            .mail .text-pad-right {
-                padding-left: 10px !important;
-            }
-
-            .mail .left-text-pad {
-                padding-right: 10px !important;
-            }
-
-            .mail .text-pad-left {
-                padding-right: 10px !important;
-            }
-
-            .mail .hide-for-small {
-                display: none !important;
-            }
-
-            .mail .show-for-desktop {
-                display: none !important;
-            }
-
-            .mail .show-for-small {
-                display: block !important;
-                width: auto !important;
-                overflow: visible !important;
-            }
-
-            .mail .hide-for-desktop {
-                display: block !important;
-                width: auto !important;
-                overflow: visible !important;
-            }
-
-            .mail .button-hide-for-small {
-                display: none !important;
-            }
-
-            .mail .button-show-for-desktop {
-                display: none !important;
-            }
-
-            .mail .button-show-for-small {
-                display: table !important;
-                overflow: visible !important;
-            }
-
-            .mail .button-hide-for-desktop {
-                display: table !important;
-                overflow: visible !important;
-            }
-
-            .mail .hide-and-true {
-                display: none !important;
-            }
-
-            .mail .hide-and-false {
-                display: block !important;
-            }
-
-            .mail .hide-or-true {
-                display: none !important;
-            }
         }
     </style>
+    <title></title>
 </head>
 <body style="width: 100% !important; min-width: 100%; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; color: #222222; font-family: Helvetica, Arial, sans-serif; font-weight: normal; font-size: 14px; text-align: left; line-height: 1.3; background: #fafafa repeat center top; margin: 0; padding: 0;"
       bgcolor="#fafafa">
@@ -450,7 +199,7 @@
     <tr style="vertical-align: top; text-align: left; padding: 0;" align="left">
         <td align="center" class="center" valign="top"
             style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: center; color: #222222; font-family: Helvetica, Arial, sans-serif; font-weight: normal; font-size: 14px; margin: 0; padding: 0;">
-            <center style="width: 100%; min-width: 580px;">
+            <div style="width: 100%; min-width: 580px; text-align: center;">
                 <table class="container"
                        style="border-spacing: 0; border-collapse: collapse; vertical-align: top; text-align: inherit; max-width: 580px; margin: 0 auto; padding: 0;">
                     <tbody>
@@ -527,7 +276,7 @@
                                                         <tr style="vertical-align: top; text-align: left; padding: 0;"
                                                             align="left">
                                                             <td class=""
-                                                                style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; width: 100%; color: #222222; font-family: Helvetica, Arial, sans-serif; font-weight: normal; font-size: 14px; background: transparent repeat center center; margin: 0; padding: 0px 10px;"
+                                                                style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; width: 100%; color: #222222; font-family: Helvetica, Arial, sans-serif; font-weight: normal; font-size: 14px; background: transparent repeat center center; margin: 0; padding: 0 10px;"
                                                                 align="left" bgcolor="transparent" valign="top">
                                                                 <p style="text-align: left; color: #222222; font-family: Helvetica, Arial, sans-serif; font-weight: normal; font-size: 14px; line-height: 1.3; margin: 0 0 10px; padding: 0;"
                                                                    align="left"><span
@@ -565,7 +314,7 @@
                 </table>
 
 
-            </center>
+            </div>
         </td>
     </tr>
     </tbody>

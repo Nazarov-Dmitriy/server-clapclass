@@ -29,17 +29,15 @@ public class FileCreate {
     }
 
     public static FileModel addFileS3(MultipartFile file, StringBuilder path) {
-        if (!file.isEmpty()) {
-            try {
-                long fileLength = file.getSize();
-                String name = file.getOriginalFilename();
-                return FileModel.builder().name(name)
-                        .path(path.toString()).size(fileLength).build();
-            } catch (Exception e) {
-                throw new InternalServerError(" Error getting file list");
-            }
+        try {
+            long fileLength = file.getSize();
+            String name = file.getOriginalFilename();
+            return FileModel.builder().name(name)
+                    .path(path.toString()).size(fileLength).build();
+        } catch (Exception e) {
+            throw new InternalServerError(" Error getting file list");
         }
-        return null;
+
     }
 
 
@@ -52,8 +50,6 @@ public class FileCreate {
                         new BufferedOutputStream(new FileOutputStream(path + name));
                 stream.write(file.getBytes());
                 stream.close();
-                System.gc();
-                MemoryStats.log();
             } catch (Exception e) {
                 throw new InternalServerError(" Error getting file list");
             }

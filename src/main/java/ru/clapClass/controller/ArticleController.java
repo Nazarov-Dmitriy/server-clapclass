@@ -10,6 +10,8 @@ import ru.clapClass.domain.dto.article.ArticleRequest;
 import ru.clapClass.domain.models.article.TypeArticle;
 import ru.clapClass.servise.article.ArticleService;
 
+import java.io.IOException;
+
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -20,6 +22,11 @@ public class ArticleController {
     @PostMapping(path = "/add")
     public ResponseEntity<?> addArticle(@Validated ArticleRequest req, MultipartFile file) {
         return articleService.addArticle(req, file);
+    }
+
+    @PostMapping(path = "/file")
+    public ResponseEntity<?> addArticle(MultipartFile file, Long id) throws IOException {
+        return articleService.file(file, id);
     }
 
     @GetMapping("/{id}")
@@ -38,7 +45,7 @@ public class ArticleController {
     }
 
     @GetMapping("/remove/{id}")
-    public ResponseEntity<?> removeNews(@PathVariable Long id) {
+    public ResponseEntity<?> removeArticle(@PathVariable Long id) {
         return articleService.remove(id);
     }
 

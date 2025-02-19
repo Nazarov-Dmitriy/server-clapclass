@@ -6,12 +6,18 @@ import lombok.Data;
 public class MemoryStats {
 
     public static void log() {
-        System.out.println(size(Runtime.getRuntime().totalMemory()));
-        System.out.println(size(Runtime.getRuntime().maxMemory()));
-        System.out.println(size(Runtime.getRuntime().freeMemory()));
+        System.out.println(size(Runtime.getRuntime().totalMemory(), "totalMemory"));
+        System.out.println(size(Runtime.getRuntime().maxMemory(), "maxMemory"));
+        System.out.println(size(Runtime.getRuntime().freeMemory(), "freeMemory"));
     }
 
-    public static String size(long val) {
-        return "Maximum Heap Size: " + (val / (1024 * 1024)) + " MB";
+    public static void clear() {
+//        System.gc();
+        log();
+    }
+
+
+    public static String size(long val, String name) {
+        return "Maximum Heap Size " + name+  ": " + (val / (1024 * 1024)) + " MB";
     }
 }

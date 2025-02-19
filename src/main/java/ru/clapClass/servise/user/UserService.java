@@ -17,10 +17,11 @@ import ru.clapClass.exception.InternalServerError;
 import ru.clapClass.repository.UserRepository;
 import ru.clapClass.security.JwtUser;
 import ru.clapClass.servise.mail.EmailService;
+import ru.clapClass.servise.s3.ServiceS3;
 import ru.clapClass.utils.FileCreate;
-import ru.clapClass.utils.FileDelete;
 import ru.clapClass.utils.HeaderToken;
 
+import java.io.IOException;
 import java.util.Optional;
 import java.util.Random;
 
@@ -32,6 +33,7 @@ public class UserService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final ServiceS3 serviceS3;
 
     @Autowired
     EmailService emailService;
@@ -118,18 +120,26 @@ public class UserService {
     }
 
     public ResponseEntity<?> addAvatar(UserRequest req) {
-        Optional<User> user = repository.findByEmail(req.getEmail());
-        if (user.isPresent()) {
-            var path = new StringBuilder();
-            path.append("files/user/").append(user.get().getId()).append("/");
-            FileDelete.deleteFile(String.valueOf(path));
-            var file = FileCreate.addFile(req.getAvatar(), path);
-            user.get().setAvatar(file);
-            repository.save(user.get());
-            assert file != null;
-            return new ResponseEntity<>(file.getPath(), HttpStatus.OK);
+        try {
+            Optional<User> user = repository.findByEmail(req.getEmail());
+            if (user.isPresent() ) {
+                var path = "avatar/" + user.get().getId() + "/" + req.getAvatar().getOriginalFilename();
+                if (user.get().getAvatar() != null) {
+                    serviceS3.deleteObject(path);
+                }
+                serviceS3.putObject(path, req.getAvatar());
+                var file = FileCreate.addFileS3(req.getAvatar(), new StringBuilder(path));
+                user.get().setAvatar(file);
+                repository.save(user.get());
+                assert file != null;
+                return new ResponseEntity<>(file.getPath(), HttpStatus.OK);
+            }
+            throw new BadRequest("ошибка данных", "errors");
+        } catch (BadRequest e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        return null;
     }
 
     public ResponseEntity<?> removeAvatar(HttpServletRequest request) {
@@ -137,9 +147,8 @@ public class UserService {
         var email = jwtService.extractUserName(token);
         Optional<User> user = repository.findByEmail(email);
         if (user.isPresent()) {
-            var pathFile = (user.get().getAvatar().getPath()).split("/");
-            var directoryPath = pathFile[0] + "/" + pathFile[1] + "/" + pathFile[2];
-            FileDelete.deleteFile(directoryPath, true);
+            var pathFile = user.get().getAvatar().getPath();
+            serviceS3.deleteObject(pathFile);
             user.get().setAvatar(null);
             repository.save(user.get());
         }

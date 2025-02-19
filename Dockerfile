@@ -6,7 +6,6 @@ ADD target/clap-class-0.0.1-SNAPSHOT.jar claplass.jar
 
 COPY target/clap-class-0.0.1-SNAPSHOT.jar clapclass.jar
 
-#ENTRYPOINT  ["java", "-jar", "/claplass.jar"]
-ENTRYPOINT  ["java", "-Xms256m","-Xmx3036m", "-jar", "/claplass.jar"]
-CMD ["bash"]
+#ENTRYPOINT  ["java","$JAVA_OPTS", "-jar", "/claplass.jar"]
+ENTRYPOINT  ["sh", "-c", "java $JAVA_OPTS -jar /claplass.jar"]
 

@@ -52,7 +52,7 @@ public class User {
     private String city;
 
     @Column(name = "subscribe")
-    private Boolean subscribe = false;
+    private Boolean subscribe;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private FileModel avatar;
