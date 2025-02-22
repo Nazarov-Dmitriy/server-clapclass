@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.clapClass.domain.dto.article.ArticleRequest;
 import ru.clapClass.domain.models.article.TypeArticle;
-import ru.clapClass.servise.article.ArticleService;
+import ru.clapClass.service.article.ArticleService;
 
 import java.io.IOException;
 
@@ -24,12 +24,7 @@ public class ArticleController {
         return articleService.addArticle(req, file);
     }
 
-    @PostMapping(path = "/file")
-    public ResponseEntity<?> addArticle(MultipartFile file, Long id) throws IOException {
-        return articleService.file(file, id);
-    }
-
-    @GetMapping("/{id}")
+        @GetMapping("/{id}")
     public ResponseEntity<?> getArticle(@PathVariable Long id) {
         return articleService.getArticle(id);
     }

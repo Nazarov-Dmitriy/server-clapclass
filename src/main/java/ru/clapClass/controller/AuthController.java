@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.clapClass.domain.dto.auth.AuthenticationResponse;
 import ru.clapClass.domain.dto.auth.UserRequest;
 import ru.clapClass.domain.dto.auth.UserResponse;
-import ru.clapClass.servise.user.AuthenticationService;
+import ru.clapClass.service.user.AuthenticationService;
 
 
 @RestController

@@ -35,19 +35,22 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        String[] requestAll = {"/auth/**", "/files/**", "/article-files/**", "/images/**", "/article/**", "/send-mail/**", "/reviews/list", "social/**"};
+        String[] requestGet = {};
+        String[] requestPost = {"/send-mail/**", "/article/**", "/auth/**", "/user/for-got-password", "/user/subscribe", "/social/**"};
+        String[] requestPut = {"/article/**", "/webinar/**", "/social/**"};
+
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(request ->
-                        request.requestMatchers("/auth/**", "/files/**",  "/article-files/**", "/images/**", "/article/**", "/send-mail/**", "/reviews/list").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/article/**")
+                        request.requestMatchers(requestAll).permitAll()
+                                .requestMatchers(HttpMethod.GET, requestGet)
                                 .permitAll()
-                                .requestMatchers(HttpMethod.POST, "/send-mail/**", "/article/**", "/auth/**", "/user/for-got-password", "/user/subscribe")
+                                .requestMatchers(HttpMethod.POST, requestPost)
                                 .permitAll()
-//                                .requestMatchers(HttpMethod.POST, "/news/**", "/webinar/**")
 //                                .authenticated()
-                                //PUT
-                                .requestMatchers(HttpMethod.PUT, "/article/**", "/webinar/**").permitAll()
-//                                .requestMatchers(HttpMethod.PUT, "/article/**", "/webinar/**").authenticated()
+                                .requestMatchers(HttpMethod.PUT, requestPut).permitAll()
+//                               .authenticated()
 //                                .requestMatchers("/reviews/**").hasAnyRole("ADMIN", "MODERATOR")
                                 .requestMatchers("/endpoint", "/admin/**").hasRole("ADMIN")
                                 .anyRequest().authenticated())

@@ -1,4 +1,4 @@
-package ru.clapClass.servise.s3;
+package ru.clapClass.service.s3;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -92,74 +92,6 @@ public class ServiceS3 {
             }
             assert fileUpload != null;
             fileUpload.close();
-        }
-    }
-
-//        public void putObject(String key, MultipartFile file) throws IOException {
-//        System.out.println(11111111);
-//        File scratchFile = File.createTempFile("prefix", "suffix");
-//        InputStream fileUpload = file.getInputStream();
-//        try {
-//            FileUtils.copyInputStreamToFile(fileUpload, scratchFile);
-//            System.out.println(scratchFile);
-//            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-//                    .bucket(BUCKET)
-//                    .key(key)
-//                    .contentType(file.getContentType())
-//                    .build();
-//               s3Client.putObject(putObjectRequest, file.getInputStream() );
-//
-//
-//             var body = RequestBody.fromBytes(file.getBytes());
-//
-//          PutObjectRequest putObjectRequest = new PutObjectRequest(BUCKET);
-//           s3Client.putObject(putObjectRequest, fileUpload);
-//           s3Client.putObject(putObjectRequest, RequestBody.fromFile(scratchFile));
-//        } finally {
-//            if (scratchFile.exists()) {
-//                scratchFile.deleteOnExit();
-//            }
-//        }
-
-
-//        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-//                .bucket(BUCKET)
-//                .key(key)
-//                .contentType(file.getContentType())
-//                .build();
-//      var fie22=  new File(Objects.requireNonNull(file.getOriginalFilename())).createNewFile();
-//       var body = RequestBody.fromBytes(file.getBytes());
-//       var  body =  RequestBody.fromBytes(file.getBytes());
-//        FileInputStream fileUpload = (FileInputStream) file.getInputStream();
-//
-//        try {
-//            s3Client.putObject(putObjectRequest, (Path) fileUpload);
-//        } finally {
-//            putObjectRequest = null;
-//            body = null;
-//        }
-//}
-
-    public void uploadss(String key, MultipartFile file) throws IOException {
-        File scratchFile = File.createTempFile("prefix", "suffix");
-        try {
-            InputStream fileUpload = file.getInputStream();
-            FileUtils.copyInputStreamToFile(file.getInputStream(), scratchFile);
-            System.out.println(scratchFile);
-
-            System.out.println(scratchFile.length());
-            var body = RequestBody.fromInputStream(fileUpload, scratchFile.length());
-            System.out.println(body);
-            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                    .bucket(BUCKET)
-                    .key(key)
-                    .contentType(file.getContentType())
-                    .build();
-            s3Client.putObject(putObjectRequest, body);
-        } finally {
-            if (scratchFile.exists()) {
-                scratchFile.deleteOnExit();
-            }
         }
     }
 

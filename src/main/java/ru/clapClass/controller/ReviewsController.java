@@ -6,7 +6,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.clapClass.domain.dto.reviews.ReviewsRequest;
-import ru.clapClass.servise.reviews.ReviewsService;
+import ru.clapClass.service.reviews.ReviewsService;
 
 
 @RestController

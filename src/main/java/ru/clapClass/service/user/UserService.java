@@ -1,4 +1,4 @@
-package ru.clapClass.servise.user;
+package ru.clapClass.service.user;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +16,8 @@ import ru.clapClass.exception.BadRequest;
 import ru.clapClass.exception.InternalServerError;
 import ru.clapClass.repository.UserRepository;
 import ru.clapClass.security.JwtUser;
-import ru.clapClass.servise.mail.EmailService;
-import ru.clapClass.servise.s3.ServiceS3;
+import ru.clapClass.service.mail.EmailService;
+import ru.clapClass.service.s3.ServiceS3;
 import ru.clapClass.utils.FileCreate;
 import ru.clapClass.utils.HeaderToken;
 
@@ -135,9 +135,7 @@ public class UserService {
                 return new ResponseEntity<>(file.getPath(), HttpStatus.OK);
             }
             throw new BadRequest("ошибка данных", "errors");
-        } catch (BadRequest e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
+        } catch (BadRequest | IOException e) {
             throw new RuntimeException(e);
         }
     }

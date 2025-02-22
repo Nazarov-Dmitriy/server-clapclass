@@ -1,4 +1,4 @@
-package ru.clapClass.servise.user;
+package ru.clapClass.service.user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import ru.clapClass.exception.BadRequest;
 import ru.clapClass.exception.InternalServerError;
 import ru.clapClass.repository.UserRepository;
 import ru.clapClass.security.CustomerUserDetailsService;
-import ru.clapClass.servise.mail.EmailService;
+import ru.clapClass.service.mail.EmailService;
 
 @Service
 @RequiredArgsConstructor

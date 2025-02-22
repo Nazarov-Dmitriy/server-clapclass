@@ -1,4 +1,4 @@
-package ru.clapClass.servise.mail;
+package ru.clapClass.service.mail;
 
 import freemarker.template.Configuration;
 import freemarker.template.TemplateException;
@@ -152,45 +152,5 @@ public class EmailService {
                     }
                 }
         );
-
-//        subscriberUsers.map( item -> {
-//
-//
-//        })
-//        for (var item : Optional.ofNullable(subscriberUsers)) {
-//            try {
-//                var url = urlFrontend.split(",")[0] + path;
-//                Map<String, String> params = new HashMap<>();
-//                params.put("email", item.getEmail());
-//                params.put("subject", news.getTitle());
-//                params.put("title", news.getTitle());
-//                params.put("description", news.getAnnotation());
-//                params.put("template", "material.ftlh");
-//                params.put("link_sait", url);
-//                sendSimpleEmail(params, null);
-//            } catch (Exception e) {
-//                throw new InternalServerError(e.getMessage());
-//            }
-//        }
     }
-
-
-//    @Async
-//    public void sendRemindersWebinar(List<SubscribeWebinarModel> subscriberUsers, String pathMaterial, WebinarModel webinar, String date_translation) {
-//        for (var item : subscriberUsers) {
-//            try {
-//                var url = urlFrontend.split(",")[0] + pathMaterial;
-//                Map<String, String> params = new HashMap<>();
-//                params.put("email", item.getUser().getEmail());
-//                params.put("subject", "Напоминание сегодня проходит вебинар");
-//                params.put("theme", webinar.getTitle());
-//                params.put("template", "reminder-webinar.ftlh");
-//                params.put("link_sait", url);
-//                params.put("date", date_translation);
-//                sendSimpleEmail(params, null);
-//            } catch (Exception e) {
-//                throw new InternalServerError(e.getMessage());
-//            }
-//        }
-//    }
 }

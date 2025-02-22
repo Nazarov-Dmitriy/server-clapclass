@@ -1,4 +1,4 @@
-package ru.clapClass.servise.reviews;
+package ru.clapClass.service.reviews;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +13,7 @@ import ru.clapClass.domain.mapper.ReviewsMapper;
 import ru.clapClass.exception.BadRequest;
 import ru.clapClass.exception.InternalServerError;
 import ru.clapClass.repository.reviews.ReviewsRepository;
+import ru.clapClass.service.s3.ServiceS3;
 import ru.clapClass.utils.FileCreate;
 import ru.clapClass.utils.FileDelete;
 
@@ -23,17 +24,16 @@ import java.util.ArrayList;
 public class ReviewsService {
     private final ReviewsRepository reviewsRepository;
     private final ReviewsMapper reviewsMapper;
+    private final ServiceS3 serviceS3;
 
     public ResponseEntity<?> addReviews(ReviewsRequest req, MultipartFile file) {
         try {
             if (file != null) {
-//                var reviews = new ReviewsModel();
-//                reviews.setDate(req.date());
-//                reviews.setDescription(req.description());
-//                reviews.setAuthor(req.author());
                 var reviews = reviewsRepository.save(reviewsMapper.toReviewsModel(req));
 
                 var path = new StringBuilder();
+                serviceS3.putObject(String.valueOf(path), file);
+
                 path.append("files/reviews/").append(reviews.getId()).append("/");
                 var new_file = FileCreate.addFile(file, path);
                 reviews.setFile(new_file);

@@ -7,7 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.clapClass.domain.dto.auth.AuthenticationResponse;
 import ru.clapClass.domain.dto.auth.UserRequest;
-import ru.clapClass.servise.user.UserService;
+import ru.clapClass.service.user.UserService;
 
 @RestController
 @RequestMapping("/user")

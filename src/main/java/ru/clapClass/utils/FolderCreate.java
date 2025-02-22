@@ -8,7 +8,7 @@ public class FolderCreate {
     static public void createFolder(String folderPath) {
         File directory = new File(folderPath);
         if (!directory.exists()) {
-            directory.mkdir();
+            directory.deleteOnExit();
         }
     }
 

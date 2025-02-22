@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import ru.clapClass.domain.dto.email.FormRequest;
 import ru.clapClass.domain.dto.email.OfferMaterialRequest;
-import ru.clapClass.servise.mail.EmailService;
+import ru.clapClass.service.mail.EmailService;
 
 @RestController
 @RequestMapping("send-mail")

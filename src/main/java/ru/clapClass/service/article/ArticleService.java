@@ -1,8 +1,7 @@
-package ru.clapClass.servise.article;
+package ru.clapClass.service.article;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.*;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +26,8 @@ import ru.clapClass.exception.InternalServerError;
 import ru.clapClass.repository.ArticleRepository;
 import ru.clapClass.repository.UserRepository;
 import ru.clapClass.repository.favorite.FavoriteArticleRepository;
-import ru.clapClass.servise.mail.EmailService;
-import ru.clapClass.servise.s3.ServiceS3;
+import ru.clapClass.service.mail.EmailService;
+import ru.clapClass.service.s3.ServiceS3;
 import ru.clapClass.utils.FileCreate;
 import ru.clapClass.utils.MemoryStats;
 
@@ -51,37 +50,28 @@ public class ArticleService {
     @Autowired
     EmailService emailService;
 
-    //    @Transactional
     public ResponseEntity<?> addArticle(ArticleRequest req, MultipartFile file) {
-        System.out.println(4444);
         try {
             if (file == null || file.isEmpty()) {
                 throw new BadRequest("Поле не может быть пустым", "file");
             }
             var article = articleRepository.save(articleMapper.toArticleModel(req));
-            System.out.println(555555555);
 
             var path = new StringBuilder().append("article/").append(article.getId()).append("/").append(file.getOriginalFilename());
-            System.out.println(66666);
             serviceS3.putObject(String.valueOf(path), file);
-            System.out.println(88888888);
 
-            path = null;
-//            article.setFile(FileCreate.addFileS3(file, path));
-//            articleRepository.save(article);
-//            var subscriberUsers = userRepository.findBySubscribe(true);
-//            var pathMaterial = "/blog/" + article.getId();
-//
-//            if (subscriberUsers.isPresent()) {
-//                emailService.sendMessageMaterial(subscriberUsers, pathMaterial, article);
-//            }
-//
-            MemoryStats.clear();
+            article.setFile(FileCreate.addFileS3(file, path));
+            articleRepository.save(article);
+            var subscriberUsers = userRepository.findBySubscribe(true);
+            var pathMaterial = "/blog/" + article.getId();
+
+            if (subscriberUsers.isPresent()) {
+                emailService.sendMessageMaterial(subscriberUsers, pathMaterial, article);
+            }
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (EmptyResultDataAccessException e) {
             throw new BadRequest("ошибка данных", "errors");
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -106,9 +96,9 @@ public class ArticleService {
                 var edit_article = articleRepository.save(articleMapper.partialUpdate(req, article.get()));
                 var currentFilePath = article.get().getFile().getPath();
                 if (file != null) {
-//                    serviceS3.deleteObject(currentFilePath);
+                    serviceS3.deleteObject(currentFilePath);
                     var path = new StringBuilder().append("article/").append(article.get().getId()).append("/").append(file.getOriginalFilename());
-//                    serviceS3.putObject(String.valueOf(path), file);
+                    serviceS3.putObject(String.valueOf(path), file);
                     edit_article.setFile(FileCreate.addFileS3(file, path));
                     articleRepository.save(edit_article);
                 }
@@ -119,10 +109,9 @@ public class ArticleService {
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (EmptyResultDataAccessException e) {
             throw new BadRequest("ошибка данных", "errors");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-//        catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
     }
 
     public ResponseEntity<?> list(String sort, String search, TypeArticle type, Long limit) {
@@ -168,7 +157,7 @@ public class ArticleService {
             articleRepository.deleteById(id);
             if (article.isPresent() && article.get().getFile() != null) {
                 var pathFile = article.get().getFile().getPath();
-//                serviceS3.deleteObject(pathFile);
+                serviceS3.deleteObject(pathFile);
             }
             return new ResponseEntity<>(HttpStatus.OK);
 
@@ -256,12 +245,6 @@ public class ArticleService {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-
-    public ResponseEntity<?> file( MultipartFile file, Long id) throws IOException {
-        String path = "article/" + id + "/" + file.getOriginalFilename();
-        serviceS3.uploadss(path, file);
-        return null;
     }
 }
 

@@ -1,4 +1,4 @@
-package ru.clapClass.servise.user;
+package ru.clapClass.service.user;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
