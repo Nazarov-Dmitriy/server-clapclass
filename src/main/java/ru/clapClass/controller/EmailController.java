@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import ru.clapClass.domain.dto.email.ContactUsRequest;
 import ru.clapClass.domain.dto.email.FormRequest;
 import ru.clapClass.domain.dto.email.OfferMaterialRequest;
 import ru.clapClass.service.mail.EmailService;
@@ -24,8 +25,12 @@ public class EmailController {
     }
 
     @PostMapping(path = "/offer-material")
-
     public ResponseEntity<?> offerMaterial(@Validated OfferMaterialRequest req, MultipartFile file) {
         return emailService.offerMaterial(req, file);
+    }
+
+    @PostMapping(path = "/contact-us")
+    public ResponseEntity<?> contactUs(@RequestBody @Validated ContactUsRequest req) {
+        return emailService.contactUs(req);
     }
 }

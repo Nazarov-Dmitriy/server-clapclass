@@ -8,7 +8,6 @@ import ru.clapClass.domain.models.article.FavoriteKey;
 @Repository
 public interface FavoriteArticleRepository extends JpaRepository<FavoriteArticleModel, FavoriteKey> {
     void deleteByPkFavorite(FavoriteKey key);
-
     FavoriteArticleModel findByPkFavorite(FavoriteKey key);
 //
 //    List<FavoriteModel> findByPkFavorite_UserId(long userId);

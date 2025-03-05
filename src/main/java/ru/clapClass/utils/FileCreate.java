@@ -28,12 +28,12 @@ public class FileCreate {
         return null;
     }
 
-    public static FileModel addFileS3(MultipartFile file, StringBuilder path) {
+    public static FileModel addFileS3(MultipartFile file, String path) {
         try {
             long fileLength = file.getSize();
             String name = file.getOriginalFilename();
             return FileModel.builder().name(name)
-                    .path(path.toString()).size(fileLength).build();
+                    .path(path).size(fileLength).build();
         } catch (Exception e) {
             throw new InternalServerError(" Error getting file list");
         }

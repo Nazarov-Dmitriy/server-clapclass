@@ -2,7 +2,6 @@ package ru.clapClass;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import ru.clapClass.utils.FolderCreate;
 import ru.clapClass.utils.MemoryStats;
 
 import java.util.TimeZone;
@@ -12,7 +11,6 @@ public class ClapClassApplication {
     public static void main(String[] args) {
         TimeZone.setDefault(TimeZone.getTimeZone("GMT+3:00"));
         SpringApplication.run(ClapClassApplication.class, args);
-        FolderCreate.initialFolder();
         MemoryStats.log();
     }
 }

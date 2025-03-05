@@ -5,8 +5,10 @@ import jakarta.persistence.*;
 import lombok.*;
 import ru.clapClass.domain.models.article.ArticleModel;
 import ru.clapClass.domain.models.article.FavoriteArticleModel;
+import ru.clapClass.domain.models.briefcase.BriefcaseModel;
 import ru.clapClass.domain.models.file.FileModel;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -57,8 +59,8 @@ public class User {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private FileModel avatar;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private ArticleModel article;
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ArticleModel> article;
 
     @PrePersist
     public void prePersist() {

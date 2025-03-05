@@ -10,8 +10,6 @@ import ru.clapClass.domain.dto.article.ArticleRequest;
 import ru.clapClass.domain.models.article.TypeArticle;
 import ru.clapClass.service.article.ArticleService;
 
-import java.io.IOException;
-
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -24,7 +22,7 @@ public class ArticleController {
         return articleService.addArticle(req, file);
     }
 
-        @GetMapping("/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> getArticle(@PathVariable Long id) {
         return articleService.getArticle(id);
     }

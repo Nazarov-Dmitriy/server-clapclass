@@ -60,13 +60,12 @@ public class ArticleService {
             var path = new StringBuilder().append("article/").append(article.getId()).append("/").append(file.getOriginalFilename());
             serviceS3.putObject(String.valueOf(path), file);
 
-            article.setFile(FileCreate.addFileS3(file, path));
+            article.setFile(FileCreate.addFileS3(file, String.valueOf(path)));
             articleRepository.save(article);
             var subscriberUsers = userRepository.findBySubscribe(true);
-            var pathMaterial = "/blog/" + article.getId();
-
+            var pathMaterialSait = "/blog/" + article.getId();
             if (subscriberUsers.isPresent()) {
-                emailService.sendMessageMaterial(subscriberUsers, pathMaterial, article);
+                emailService.sendMessageMaterial(subscriberUsers, pathMaterialSait, article);
             }
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (EmptyResultDataAccessException e) {
@@ -99,7 +98,7 @@ public class ArticleService {
                     serviceS3.deleteObject(currentFilePath);
                     var path = new StringBuilder().append("article/").append(article.get().getId()).append("/").append(file.getOriginalFilename());
                     serviceS3.putObject(String.valueOf(path), file);
-                    edit_article.setFile(FileCreate.addFileS3(file, path));
+                    edit_article.setFile(FileCreate.addFileS3(file, String.valueOf(path)));
                     articleRepository.save(edit_article);
                 }
                 return new ResponseEntity<>(articleMapper.toArticleResponse(article.get()), HttpStatus.OK);
@@ -120,7 +119,7 @@ public class ArticleService {
             var sortParam = sort != null && sort.equals("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
             ExampleMatcher matcher = ExampleMatcher
                     .matchingAll()
-                    .withIgnoreCase("likes")
+                    .withIgnoreCase()
                     .withMatcher("title", contains().ignoreCase())
                     .withIgnoreNullValues()
                     .withIgnorePaths("shows", "likes");

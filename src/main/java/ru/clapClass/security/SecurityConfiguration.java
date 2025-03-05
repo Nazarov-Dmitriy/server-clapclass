@@ -35,22 +35,22 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        String[] requestAll = {"/auth/**", "/files/**", "/article-files/**", "/images/**", "/article/**", "/send-mail/**", "/reviews/list", "social/**"};
-        String[] requestGet = {};
-        String[] requestPost = {"/send-mail/**", "/article/**", "/auth/**", "/user/for-got-password", "/user/subscribe", "/social/**"};
-        String[] requestPut = {"/article/**", "/webinar/**", "/social/**"};
+
+        String[] requestAll = {"/auth/**", "/files/**", "/article-files/**", "/images/**", "/article/**", "/send-mail/**", "/social/list", "/reviews/list"};
+        String[] requestGet = {"/article/remove", "/article/remove/", "/social/remove/", "/reviews/remove/", "/briefcase/list", "/briefcase/remove/"};
+        String[] requestPost = {"/send-mail/**", "/article/**", "/briefcase/**", "/auth/**", "/user/for-got-password", "/user/subscribe", "/social/**",
+                "/briefcase/**"};
+        String[] requestPut = {"/article/**", "/webinar/**", "/social/**", "/briefcase/**", "/reviews/**",};
 
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(request ->
                         request.requestMatchers(requestAll).permitAll()
                                 .requestMatchers(HttpMethod.GET, requestGet)
-                                .permitAll()
+                                .authenticated()
                                 .requestMatchers(HttpMethod.POST, requestPost)
-                                .permitAll()
-//                                .authenticated()
-                                .requestMatchers(HttpMethod.PUT, requestPut).permitAll()
-//                               .authenticated()
+                                .authenticated()
+                                .requestMatchers(HttpMethod.PUT, requestPut).authenticated()
 //                                .requestMatchers("/reviews/**").hasAnyRole("ADMIN", "MODERATOR")
                                 .requestMatchers("/endpoint", "/admin/**").hasRole("ADMIN")
                                 .anyRequest().authenticated())

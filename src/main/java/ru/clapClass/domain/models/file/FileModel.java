@@ -3,6 +3,7 @@ package ru.clapClass.domain.models.file;
 import jakarta.persistence.*;
 import lombok.*;
 import ru.clapClass.domain.models.article.ArticleModel;
+import ru.clapClass.domain.models.briefcase.BriefcaseModel;
 import ru.clapClass.domain.models.reviews.ReviewsModel;
 import ru.clapClass.domain.models.user.User;
 

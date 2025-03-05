@@ -12,7 +12,6 @@ public class MemoryStats {
     }
 
     public static void clear() {
-//        System.gc();
         log();
     }
 

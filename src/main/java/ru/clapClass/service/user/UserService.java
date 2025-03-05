@@ -125,10 +125,10 @@ public class UserService {
             if (user.isPresent() ) {
                 var path = "avatar/" + user.get().getId() + "/" + req.getAvatar().getOriginalFilename();
                 if (user.get().getAvatar() != null) {
-                    serviceS3.deleteObject(path);
+                    serviceS3.deleteObject(user.get().getAvatar().getPath());
                 }
                 serviceS3.putObject(path, req.getAvatar());
-                var file = FileCreate.addFileS3(req.getAvatar(), new StringBuilder(path));
+                var file = FileCreate.addFileS3(req.getAvatar(),path);
                 user.get().setAvatar(file);
                 repository.save(user.get());
                 assert file != null;

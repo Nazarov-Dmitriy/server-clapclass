@@ -14,6 +14,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ru.clapClass.domain.dto.email.ContactUsRequest;
 import ru.clapClass.domain.dto.email.FormRequest;
 import ru.clapClass.domain.dto.email.OfferMaterialRequest;
 import ru.clapClass.domain.models.article.ArticleModel;
@@ -152,5 +153,23 @@ public class EmailService {
                     }
                 }
         );
+    }
+
+    public ResponseEntity<?> contactUs(ContactUsRequest req) {
+        try {
+            Map<String, String> params = new HashMap<>();
+            params.put("email", username);
+            params.put("subject", "Форма связаться с нами");
+            params.put("name", req.name());
+            params.put("email_user", req.email());
+            params.put("phone", req.phone());
+            params.put("theme", req.message());
+            params.put("question", req.textarea());
+            params.put("template", "contact_us.ftlh");
+            sendSimpleEmail(params, null);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            throw new BadRequest("ошибка данных", "error");
+        }
     }
 }

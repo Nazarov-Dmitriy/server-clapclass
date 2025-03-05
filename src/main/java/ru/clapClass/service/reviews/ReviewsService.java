@@ -15,8 +15,8 @@ import ru.clapClass.exception.InternalServerError;
 import ru.clapClass.repository.reviews.ReviewsRepository;
 import ru.clapClass.service.s3.ServiceS3;
 import ru.clapClass.utils.FileCreate;
-import ru.clapClass.utils.FileDelete;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 @Service
@@ -31,11 +31,9 @@ public class ReviewsService {
             if (file != null) {
                 var reviews = reviewsRepository.save(reviewsMapper.toReviewsModel(req));
 
-                var path = new StringBuilder();
+                var path = new StringBuilder().append("reviews/").append(reviews.getId()).append("/").append(file.getOriginalFilename());
                 serviceS3.putObject(String.valueOf(path), file);
-
-                path.append("files/reviews/").append(reviews.getId()).append("/");
-                var new_file = FileCreate.addFile(file, path);
+                var new_file = FileCreate.addFileS3(file, String.valueOf(path));
                 reviews.setFile(new_file);
                 reviewsRepository.save(reviews);
                 return new ResponseEntity<>(HttpStatus.OK);
@@ -52,24 +50,21 @@ public class ReviewsService {
             var reviews = reviewsRepository.findById(req.id());
             if (reviews.isPresent()) {
                 var edit_reviews = reviewsRepository.save(reviewsMapper.partialUpdate(req, reviews.get()));
-                var currentFile = edit_reviews.getFile();
+                var currentFilePath = edit_reviews.getFile().getPath();
 
                 if (file != null) {
-                    if (currentFile != null) {
-                        var pathFile = (currentFile.getPath().split("/"));
-                        var directoryPath = pathFile[0] + "/" + pathFile[1] + "/" + pathFile[2];
-                        FileDelete.deleteFile(directoryPath);
-                    }
-                    var path = new StringBuilder();
-                    path.append("files/reviews/").append(edit_reviews.getId()).append("/");
-                    var new_file = FileCreate.addFile(file, path);
-                    edit_reviews.setFile(new_file);
+                    serviceS3.deleteObject(currentFilePath);
+                    var path = new StringBuilder().append("reviews/").append(edit_reviews.getId()).append("/").append(file.getOriginalFilename());
+                    serviceS3.putObject(String.valueOf(path), file);
+                    edit_reviews.setFile(FileCreate.addFileS3(file, String.valueOf(path)));
                     reviewsRepository.save(edit_reviews);
                 }
             }
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (EmptyResultDataAccessException e) {
             throw new BadRequest("ошибка данных", "errors");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -95,9 +90,7 @@ public class ReviewsService {
             reviewsRepository.deleteById(id);
 
             if (reviews.isPresent() && reviews.get().getFile() != null) {
-                var pathFile = (reviews.get().getFile().getPath().split("/"));
-                var directoryPath = pathFile[0] + "/" + pathFile[1] + "/" + pathFile[2];
-                FileDelete.deleteFile(directoryPath, true);
+                serviceS3.deleteObject(reviews.get().getFile().getPath());
             }
             return new ResponseEntity<>(HttpStatus.OK);
 
@@ -105,8 +98,6 @@ public class ReviewsService {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-
 }
 
 

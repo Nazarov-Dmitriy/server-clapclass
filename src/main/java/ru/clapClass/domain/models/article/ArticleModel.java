@@ -39,7 +39,6 @@ public class ArticleModel extends BaseEntity {
     private TypeArticle type;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @ToString.Exclude
     private FileModel file;
 
     @ManyToOne(fetch = FetchType.EAGER)
