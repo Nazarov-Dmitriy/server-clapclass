@@ -1,6 +1,7 @@
 package ru.clapClass.service;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
@@ -15,6 +16,7 @@ import ru.clapClass.domain.dto.briefcase.*;
 import ru.clapClass.domain.dto.file.FileModelDto;
 import ru.clapClass.domain.enums.TypeWarmUp;
 import ru.clapClass.domain.mapper.BriefcaseMapper;
+import ru.clapClass.domain.models.article.ArticleModel;
 import ru.clapClass.domain.models.briefcase.BriefcaseModel;
 import ru.clapClass.domain.models.briefcase.LevelBriefcaseModel;
 import ru.clapClass.exception.BadRequest;
@@ -344,5 +346,16 @@ public class BriefcaseService {
         } catch (Exception e) {
             throw new BadRequest("ошибка данных", "errors");
         }
+    }
+
+    public ResponseEntity<?> randomList(Long id, int limit) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<BriefcaseModel> q = cb.createQuery(BriefcaseModel.class);
+        Root<BriefcaseModel> c = q.from(BriefcaseModel.class);
+        Predicate p1 = cb.not(c.get("id").in(id));
+        Order order = cb.asc(cb.function("RAND", null));
+        q.select(c).where(p1).orderBy(order);
+        var results = em.createQuery(q).setMaxResults(limit).getResultList().stream().map(briefcaseMapper::toResponseDto);
+        return new ResponseEntity<>(results, HttpStatus.OK);
     }
 }

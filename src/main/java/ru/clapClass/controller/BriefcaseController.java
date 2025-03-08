@@ -81,4 +81,9 @@ public class BriefcaseController {
         return briefcaseService.getBriefcase(id);
     }
 
+    @GetMapping("/random-list")
+    public ResponseEntity<?> randomList(@RequestParam() Long id, @RequestParam(required = false, defaultValue = "3") int limit) {
+        return briefcaseService.randomList(id, limit);
+    }
+
 }
