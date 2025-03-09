@@ -37,7 +37,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         String[] requestAll = {"/auth/**", "/files/**", "/article-files/**", "/images/**", "/article/**", "/send-mail/**", "/social/list", "/reviews/list"};
-        String[] requestGet = {"/article/remove", "/article/remove/", "/social/remove/", "/reviews/remove/", "/briefcase/list", "/briefcase/remove/"};
+        String[] requestGet = {"/article/remove", "/article/remove/", "/social/remove/", "/reviews/remove/", "/briefcase/list", "/briefcase/remove/", "/briefcase/favorite/**" };
         String[] requestPost = {"/send-mail/**", "/article/**", "/briefcase/**", "/auth/**", "/user/for-got-password", "/user/subscribe", "/social/**",
                 "/briefcase/**"};
         String[] requestPut = {"/article/**", "/webinar/**", "/social/**", "/briefcase/**", "/reviews/**",};

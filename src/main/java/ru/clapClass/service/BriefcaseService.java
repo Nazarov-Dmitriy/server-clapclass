@@ -16,11 +16,17 @@ import ru.clapClass.domain.dto.briefcase.*;
 import ru.clapClass.domain.dto.file.FileModelDto;
 import ru.clapClass.domain.enums.TypeWarmUp;
 import ru.clapClass.domain.mapper.BriefcaseMapper;
-import ru.clapClass.domain.models.article.ArticleModel;
 import ru.clapClass.domain.models.briefcase.BriefcaseModel;
 import ru.clapClass.domain.models.briefcase.LevelBriefcaseModel;
+import ru.clapClass.domain.models.briefcase.favorite.BriefcaseFavorite;
+import ru.clapClass.domain.models.briefcase.favorite.BriefcaseFavoriteKey;
+import ru.clapClass.domain.models.briefcase.raiting.BriefcaseRating;
+import ru.clapClass.domain.models.briefcase.raiting.BriefcaseRatingKey;
 import ru.clapClass.exception.BadRequest;
 import ru.clapClass.exception.InternalServerError;
+import ru.clapClass.repository.UserRepository;
+import ru.clapClass.repository.briefcase.BriefcaseFavoriteRepository;
+import ru.clapClass.repository.briefcase.BriefcaseRatingRepository;
 import ru.clapClass.repository.briefcase.BriefcaseRepository;
 import ru.clapClass.repository.briefcase.LevelBriefcaseRepository;
 import ru.clapClass.service.s3.ServiceS3;
@@ -29,6 +35,7 @@ import ru.clapClass.utils.FileCreate;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.contains;
 
@@ -40,6 +47,9 @@ public class BriefcaseService {
     private final BriefcaseRepository briefcaseRepository;
     private final BriefcaseMapper briefcaseMapper;
     private final LevelBriefcaseRepository levelBriefcaseRepository;
+    private final BriefcaseFavoriteRepository briefcaseFavoriteRepository;
+    private final BriefcaseRatingRepository briefcaseRatingRepository;
+    private final UserRepository userRepository;
 
     public ResponseEntity<?> addCase(BriefcaseRequest req, MultipartFile material) {
         try {
@@ -130,6 +140,8 @@ public class BriefcaseService {
                 var pageRequest = PageRequest.of(0, Math.toIntExact(limit), sortParam, "createdAt");
                 var briefcase = briefcaseRepository.findAll(Example.of(filters, matcher), pageRequest);
                 for (var item : briefcase) {
+                    var rating = ratingAvg(item.getId());
+                    rating.ifPresent(item::setRating);
                     list.add(briefcaseMapper.toResponseDto(item));
                 }
                 return new ResponseEntity<>(list, HttpStatus.OK);
@@ -137,6 +149,8 @@ public class BriefcaseService {
 
             var briefcase = briefcaseRepository.findAll(Example.of(filters, matcher), Sort.by(sortParam, "createdAt"));
             for (var item : briefcase) {
+                var rating = ratingAvg(item.getId());
+                rating.ifPresent(item::setRating);
                 list.add(briefcaseMapper.toResponseDto(item));
             }
             return new ResponseEntity<>(list, HttpStatus.OK);
@@ -144,6 +158,38 @@ public class BriefcaseService {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
+    }
+
+    public ResponseEntity<?> listFavorite(Long userId, String search, TypeWarmUp type) {
+        try {
+            var list = new ArrayList<BriefcaseResponse>();
+            Optional<List<BriefcaseFavorite>> briefcaseFavorite;
+            if (!search.trim().isEmpty() && type == null) {
+                briefcaseFavorite = briefcaseFavoriteRepository.findById_UserIdAndBriefcase_TitleContaining(userId, search);
+            } else if (type != null && search.trim().isEmpty()) {
+                briefcaseFavorite = briefcaseFavoriteRepository.findById_UserIdAndBriefcase_TypeLike(userId, type);
+            } else if ( !search.trim().isEmpty() ) {
+                briefcaseFavorite = briefcaseFavoriteRepository.findById_UserIdAndBriefcase_TypeLikeAndBriefcase_TitleContaining(userId, type, search);
+            } else {
+                briefcaseFavorite = briefcaseFavoriteRepository.findById_UserId(userId);
+            }
+
+            if (briefcaseFavorite.isPresent()) {
+                for (var item : briefcaseFavorite.get()) {
+                    var rating = ratingAvg(item.getBriefcase().getId());
+                    var briefcase = item.getBriefcase();
+                    rating.ifPresent(briefcase::setRating);
+                    list.add(briefcaseMapper.toResponseDto(briefcase));
+                }
+            }
+            return new ResponseEntity<>(list, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    public Optional<Double> ratingAvg(Long id) {
+        return briefcaseRatingRepository.findAvgRating(id);
     }
 
     public ResponseEntity<?> remove(Long id) {
@@ -253,7 +299,7 @@ public class BriefcaseService {
     public ResponseEntity<?> editRulesVideo(BriefcaseRequest req, MultipartFile video) {
         try {
             var briefcase = briefcaseRepository.findById(req.getId());
-            var path="";
+            var path = "";
             BriefcaseResponse res = null;
             if (briefcase.isPresent()) {
                 briefcase.get().setRules_video_description(req.getRules_video_description());
@@ -310,7 +356,7 @@ public class BriefcaseService {
                     levelBriefcaseRepository.save(level.get());
                 }
                 res = briefcaseMapper.toLevelResponseDto(level.get());
-                assert file != null ;
+                assert file != null;
                 serviceS3.putObject(path, file);
             }
             return new ResponseEntity<>(res, HttpStatus.OK);
@@ -357,5 +403,88 @@ public class BriefcaseService {
         q.select(c).where(p1).orderBy(order);
         var results = em.createQuery(q).setMaxResults(limit).getResultList().stream().map(briefcaseMapper::toResponseDto);
         return new ResponseEntity<>(results, HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> setShow(Long id) {
+        var briefcase = briefcaseRepository.findById(id);
+        if (briefcase.isPresent()) {
+            briefcase.get().setShows(briefcase.get().getShows() + 1);
+            briefcaseRepository.save(briefcase.get());
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    public ResponseEntity<?> addFavorite(Long briefcaseId, Long userId) {
+        try {
+            var briefcase = briefcaseRepository.findById(briefcaseId);
+            var user = userRepository.findById(userId);
+            if (briefcase.isPresent() && user.isPresent()) {
+                var pk = new BriefcaseFavoriteKey(userId, briefcaseId);
+                var favorite = BriefcaseFavorite.builder().id(pk).briefcase(briefcase.get()).user(user.get()).build();
+                briefcaseFavoriteRepository.save(favorite);
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else {
+                throw new BadRequest("ошибка данных", "errors");
+            }
+        } catch (Exception e) {
+            throw new InternalServerError("error", e.getMessage());
+        }
+    }
+
+    public ResponseEntity<?> removeFavorite(Long briefcaseId, Long userId) {
+        try {
+            var pk = new BriefcaseFavoriteKey(userId, briefcaseId);
+            var favorite = briefcaseFavoriteRepository.findById(pk);
+            if (favorite.isPresent()) {
+                briefcaseFavoriteRepository.delete(favorite.get());
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else {
+                throw new BadRequest("ошибка данных", "errors");
+            }
+        } catch (Exception e) {
+            throw new InternalServerError("error", e.getMessage());
+        }
+    }
+
+    public ResponseEntity<?> getFavorite(Long briefcaseId, Long userId) {
+        try {
+            var pk = new BriefcaseFavoriteKey(userId, briefcaseId);
+            var favorite = briefcaseFavoriteRepository.findById(pk);
+            if (favorite.isPresent()) {
+                return new ResponseEntity<>(true, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(false, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            throw new InternalServerError("error", e.getMessage());
+        }
+    }
+
+    public ResponseEntity<?> addRating(Long briefcaseId, Long userId, int rating) {
+        try {
+            var briefcase = briefcaseRepository.findById(briefcaseId);
+            var user = userRepository.findById(userId);
+            if (briefcase.isPresent() && user.isPresent()) {
+                var pk = new BriefcaseRatingKey(userId, briefcaseId);
+                var briefcaseRating = BriefcaseRating.builder().id(pk).briefcase(briefcase.get()).user(user.get()).rating(rating).build();
+                briefcaseRatingRepository.save(briefcaseRating);
+                return new ResponseEntity<>(rating, HttpStatus.OK);
+            } else {
+                throw new BadRequest("ошибка данных", "errors");
+            }
+        } catch (Exception e) {
+            throw new InternalServerError("error", e.getMessage());
+        }
+    }
+
+    public ResponseEntity<?> getRating(Long briefcaseId, Long userId) {
+        try {
+            var pk = new BriefcaseRatingKey(userId, briefcaseId);
+            var favorite = briefcaseRatingRepository.findById(pk);
+            return favorite.map(briefcaseRating -> new ResponseEntity<>(briefcaseRating.getRating(), HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(0, HttpStatus.OK));
+        } catch (Exception e) {
+            throw new InternalServerError("error", e.getMessage());
+        }
     }
 }

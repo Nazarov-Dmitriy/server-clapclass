@@ -28,7 +28,6 @@ public class ArticleResponse implements Serializable {
     private LocalDateTime updatedAt;
     private String file;
     private UserDto author;
-//
 
     /**
      * DTO for {@link ru.clapClass.domain.models.user.User}

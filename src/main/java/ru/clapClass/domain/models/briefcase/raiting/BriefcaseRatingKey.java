@@ -1,37 +1,36 @@
-package ru.clapClass.domain.models.article;
+package ru.clapClass.domain.models.briefcase.raiting;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Objects;
 
-@Data
 @Embeddable
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-public class FavoriteKey implements Serializable {
-    @Column(name = "article_id")
-    Long articleId;
-
+public class BriefcaseRatingKey implements Serializable {
     @Column(name = "user_id")
     Long userId;
 
+    @Column(name = "briefcase_id")
+    Long briefcaseId;
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        FavoriteKey that = (FavoriteKey) o;
-        return Objects.equals(articleId, that.articleId) && Objects.equals(userId, that.userId);
+        BriefcaseRatingKey that = (BriefcaseRatingKey) o;
+        return Objects.equals(userId, that.userId) && Objects.equals(briefcaseId, that.briefcaseId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(articleId, userId);
+        return Objects.hash(userId, briefcaseId);
     }
 }

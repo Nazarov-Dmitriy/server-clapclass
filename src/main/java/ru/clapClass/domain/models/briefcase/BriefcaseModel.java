@@ -4,10 +4,13 @@ import jakarta.persistence.*;
 import lombok.*;
 import ru.clapClass.domain.enums.TypeWarmUp;
 import ru.clapClass.domain.models.base.BaseEntity;
+import ru.clapClass.domain.models.briefcase.favorite.BriefcaseFavorite;
+import ru.clapClass.domain.models.briefcase.raiting.BriefcaseRating;
 import ru.clapClass.domain.models.file.FileModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -47,7 +50,7 @@ public class BriefcaseModel extends BaseEntity {
     private int shows;
 
     @Column(name = "rating")
-    private int rating;
+    private double rating;
 
     @Lob
     @Column(name = "rules_video_description", columnDefinition = "MEDIUMTEXT")
@@ -70,5 +73,11 @@ public class BriefcaseModel extends BaseEntity {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LevelBriefcaseModel> levels = new ArrayList<>();
+
+    @OneToMany(mappedBy = "briefcase" , cascade = CascadeType.ALL, orphanRemoval = true)
+    Set<BriefcaseFavorite> favorites;
+
+    @OneToMany(mappedBy = "briefcase" , cascade = CascadeType.ALL, orphanRemoval = true)
+    Set<BriefcaseRating> briefcase_ratings;
 }
 

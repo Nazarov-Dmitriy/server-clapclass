@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import ru.clapClass.domain.dto.email.ContactUsRequest;
 import ru.clapClass.domain.dto.email.FormRequest;
 import ru.clapClass.domain.dto.email.OfferMaterialRequest;
+import ru.clapClass.domain.dto.email.SendThemeRequest;
 import ru.clapClass.service.mail.EmailService;
 
 @RestController
@@ -29,8 +29,8 @@ public class EmailController {
         return emailService.offerMaterial(req, file);
     }
 
-    @PostMapping(path = "/contact-us")
-    public ResponseEntity<?> contactUs(@RequestBody @Validated ContactUsRequest req) {
-        return emailService.contactUs(req);
+    @PostMapping(path = "/theme")
+    public ResponseEntity<?> sendTheme(@RequestBody @Validated SendThemeRequest req) {
+        return emailService.sendTheme(req);
     }
 }

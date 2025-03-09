@@ -18,9 +18,9 @@ import ru.clapClass.domain.dto.article.ArticleRequest;
 import ru.clapClass.domain.dto.article.ArticleResponse;
 import ru.clapClass.domain.mapper.ArticleMapper;
 import ru.clapClass.domain.models.article.ArticleModel;
-import ru.clapClass.domain.models.article.FavoriteArticleModel;
-import ru.clapClass.domain.models.article.FavoriteKey;
 import ru.clapClass.domain.models.article.TypeArticle;
+import ru.clapClass.domain.models.article.favorite.ArticleFavorite;
+import ru.clapClass.domain.models.article.favorite.ArticleFavoriteKey;
 import ru.clapClass.exception.BadRequest;
 import ru.clapClass.exception.InternalServerError;
 import ru.clapClass.repository.ArticleRepository;
@@ -29,11 +29,12 @@ import ru.clapClass.repository.favorite.FavoriteArticleRepository;
 import ru.clapClass.service.mail.EmailService;
 import ru.clapClass.service.s3.ServiceS3;
 import ru.clapClass.utils.FileCreate;
-import ru.clapClass.utils.MemoryStats;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.contains;
 
@@ -58,15 +59,15 @@ public class ArticleService {
             var article = articleRepository.save(articleMapper.toArticleModel(req));
 
             var path = new StringBuilder().append("article/").append(article.getId()).append("/").append(file.getOriginalFilename());
-            serviceS3.putObject(String.valueOf(path), file);
-
             article.setFile(FileCreate.addFileS3(file, String.valueOf(path)));
+
             articleRepository.save(article);
             var subscriberUsers = userRepository.findBySubscribe(true);
             var pathMaterialSait = "/blog/" + article.getId();
             if (subscriberUsers.isPresent()) {
                 emailService.sendMessageMaterial(subscriberUsers, pathMaterialSait, article);
             }
+            serviceS3.putObject(String.valueOf(path), file);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (EmptyResultDataAccessException e) {
             throw new BadRequest("ошибка данных", "errors");
@@ -91,20 +92,20 @@ public class ArticleService {
     public ResponseEntity<?> editArticle(ArticleRequest req, MultipartFile file) {
         try {
             var article = articleRepository.findById(req.id());
+            StringBuilder path = new StringBuilder();
             if (article.isPresent()) {
                 var edit_article = articleRepository.save(articleMapper.partialUpdate(req, article.get()));
                 var currentFilePath = article.get().getFile().getPath();
                 if (file != null) {
                     serviceS3.deleteObject(currentFilePath);
-                    var path = new StringBuilder().append("article/").append(article.get().getId()).append("/").append(file.getOriginalFilename());
-                    serviceS3.putObject(String.valueOf(path), file);
+                    path = new StringBuilder().append("article/").append(article.get().getId()).append("/").append(file.getOriginalFilename());
                     edit_article.setFile(FileCreate.addFileS3(file, String.valueOf(path)));
                     articleRepository.save(edit_article);
                 }
+                assert file != null;
+                serviceS3.putObject(String.valueOf(path), file);
                 return new ResponseEntity<>(articleMapper.toArticleResponse(article.get()), HttpStatus.OK);
             }
-            MemoryStats.clear();
-
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (EmptyResultDataAccessException e) {
             throw new BadRequest("ошибка данных", "errors");
@@ -142,6 +143,27 @@ public class ArticleService {
             var article = articleRepository.findAll(Example.of(filters, matcher), Sort.by(sortParam, "createdAt"));
             for (var item : article) {
                 list.add(articleMapper.toArticleResponse(item));
+            }
+            return new ResponseEntity<>(list, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    public ResponseEntity<?> listFavorite(Long userId, String search) {
+        try {
+            var list = new ArrayList<ArticleResponse>();
+            Optional<List<ArticleFavorite>> articleFavorites;
+            if (!search.trim().isEmpty()) {
+                articleFavorites = articleFavoriteRepository.findById_UserIdAndArticle_TitleContaining(userId, search);
+            } else {
+                articleFavorites = articleFavoriteRepository.findById_UserId(userId);
+            }
+
+            if (articleFavorites.isPresent()) {
+                for (var item : articleFavorites.get()) {
+                    list.add(articleMapper.toArticleResponse(item.getArticle()));
+                }
             }
             return new ResponseEntity<>(list, HttpStatus.OK);
         } catch (Exception e) {
@@ -211,9 +233,13 @@ public class ArticleService {
     @Transactional
     public ResponseEntity<?> addArticleFavorite(Long articleId, Long userId) {
         try {
-            var favoriteKey = new FavoriteKey(articleId, userId);
-            var favorite = new FavoriteArticleModel(favoriteKey);
-            articleFavoriteRepository.save(favorite);
+            var user = userRepository.findById(userId);
+            var article = articleRepository.findById(articleId);
+            if (article.isPresent() && user.isPresent()) {
+                var favoriteKey = new ArticleFavoriteKey(articleId, userId);
+                var favorite = new ArticleFavorite(favoriteKey, user.get(), article.get());
+                articleFavoriteRepository.save(favorite);
+            }
             return new ResponseEntity<>(true, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -223,8 +249,8 @@ public class ArticleService {
     @Transactional
     public ResponseEntity<?> removeArticleFavorite(Long articleId, Long userId) {
         try {
-            var favoriteKey = new FavoriteKey(articleId, userId);
-            articleFavoriteRepository.deleteByPkFavorite(favoriteKey);
+            var favoriteKey = new ArticleFavoriteKey(userId, articleId);
+            articleFavoriteRepository.deleteById(favoriteKey);
             return new ResponseEntity<>(false, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -234,10 +260,10 @@ public class ArticleService {
     @Transactional
     public ResponseEntity<?> getArticleFavorite(Long articleId, Long userId) {
         try {
-            var favoriteKey = new FavoriteKey(articleId, userId);
-            var favorite = articleFavoriteRepository.findByPkFavorite(favoriteKey);
-            if (favorite != null) {
-                return new ResponseEntity<>(favorite.getFavorite(), HttpStatus.OK);
+            var favoriteKey = new ArticleFavoriteKey(userId, articleId);
+            var favorite = articleFavoriteRepository.findById(favoriteKey);
+            if (favorite.isPresent()) {
+                return new ResponseEntity<>(true, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(false, HttpStatus.OK);
             }
@@ -245,5 +271,7 @@ public class ArticleService {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
 }
 

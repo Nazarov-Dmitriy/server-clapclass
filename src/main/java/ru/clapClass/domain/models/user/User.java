@@ -4,8 +4,9 @@ package ru.clapClass.domain.models.user;
 import jakarta.persistence.*;
 import lombok.*;
 import ru.clapClass.domain.models.article.ArticleModel;
-import ru.clapClass.domain.models.article.FavoriteArticleModel;
-import ru.clapClass.domain.models.briefcase.BriefcaseModel;
+import ru.clapClass.domain.models.article.favorite.ArticleFavorite;
+import ru.clapClass.domain.models.briefcase.favorite.BriefcaseFavorite;
+import ru.clapClass.domain.models.briefcase.raiting.BriefcaseRating;
 import ru.clapClass.domain.models.file.FileModel;
 
 import java.util.List;
@@ -62,6 +63,12 @@ public class User {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ArticleModel> article;
 
+    @OneToMany(mappedBy = "user")
+    Set<BriefcaseFavorite> favorites;
+
+    @OneToMany(mappedBy = "user")
+    Set<BriefcaseRating> briefcase_ratings;
+
     @PrePersist
     public void prePersist() {
         if (completed_profile == null) {
@@ -73,5 +80,5 @@ public class User {
     }
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, orphanRemoval = true)
-    Set<FavoriteArticleModel> favorite;
+    Set<ArticleFavorite> favorite;
 }

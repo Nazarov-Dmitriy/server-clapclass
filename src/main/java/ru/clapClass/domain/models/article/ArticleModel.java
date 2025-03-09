@@ -2,6 +2,7 @@ package ru.clapClass.domain.models.article;
 
 import jakarta.persistence.*;
 import lombok.*;
+import ru.clapClass.domain.models.article.favorite.ArticleFavorite;
 import ru.clapClass.domain.models.base.BaseEntity;
 import ru.clapClass.domain.models.file.FileModel;
 import ru.clapClass.domain.models.user.User;
@@ -45,6 +46,6 @@ public class ArticleModel extends BaseEntity {
     private User author;
 
     @OneToMany(mappedBy = "article", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    List<FavoriteArticleModel>  favorite;
+    List<ArticleFavorite> favorite;
 }
 
