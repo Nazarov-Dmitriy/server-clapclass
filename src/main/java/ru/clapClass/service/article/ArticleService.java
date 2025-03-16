@@ -33,8 +33,6 @@ import ru.clapClass.utils.FileCreate;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
 
 import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.contains;
 
@@ -150,20 +148,32 @@ public class ArticleService {
         }
     }
 
-    public ResponseEntity<?> listFavorite(Long userId, String search) {
+    public ResponseEntity<?> listFavorite(Long userId, String search, TypeArticle type, String sort) {
         try {
             var list = new ArrayList<ArticleResponse>();
-            Optional<List<ArticleFavorite>> articleFavorites;
-            if (!search.trim().isEmpty()) {
-                articleFavorites = articleFavoriteRepository.findById_UserIdAndArticle_TitleContaining(userId, search);
-            } else {
-                articleFavorites = articleFavoriteRepository.findById_UserId(userId);
-            }
+            var sortParam = sort != null && sort.equals("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            var pk = new ArticleFavoriteKey();
+            pk.setUserId(userId);
+            ExampleMatcher matcher = ExampleMatcher
+                    .matchingAll()
+                    .withIgnoreCase()
+                    .withMatcher("article.title", contains().ignoreCase())
+                    .withIgnoreNullValues()
+                    .withIgnorePaths("article.shows", "article.likes");
 
-            if (articleFavorites.isPresent()) {
-                for (var item : articleFavorites.get()) {
-                    list.add(articleMapper.toArticleResponse(item.getArticle()));
-                }
+            var filtersArticleModel = ArticleModel
+                    .builder()
+                    .title(search)
+                    .type(type)
+                    .build();
+
+            var filters = ArticleFavorite
+                    .builder().id(pk)
+                    .article(filtersArticleModel)
+                    .build();
+            var articleFavorites = articleFavoriteRepository.findAll(Example.of(filters, matcher), Sort.by(sortParam, "article.createdAt"));
+            for (var item : articleFavorites) {
+                list.add(articleMapper.toArticleResponse(item.getArticle()));
             }
             return new ResponseEntity<>(list, HttpStatus.OK);
         } catch (Exception e) {
@@ -271,7 +281,5 @@ public class ArticleService {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-
 }
 

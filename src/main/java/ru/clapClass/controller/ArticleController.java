@@ -39,9 +39,11 @@ public class ArticleController {
 
     @GetMapping("/list/favorite")
     public ResponseEntity<?> list(@RequestParam() Long user_id,
+                                  @RequestParam(required = false) String sort,
+                                  @RequestParam(required = false) TypeArticle type,
                                   @RequestParam(required = false) String search
     ) {
-        return articleService.listFavorite(user_id,  search);
+        return articleService.listFavorite(user_id,  search , type , sort);
     }
 
     @GetMapping("/remove/{id}")

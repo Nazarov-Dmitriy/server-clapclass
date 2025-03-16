@@ -168,7 +168,7 @@ public class BriefcaseService {
                 briefcaseFavorite = briefcaseFavoriteRepository.findById_UserIdAndBriefcase_TitleContaining(userId, search);
             } else if (type != null && search.trim().isEmpty()) {
                 briefcaseFavorite = briefcaseFavoriteRepository.findById_UserIdAndBriefcase_TypeLike(userId, type);
-            } else if ( !search.trim().isEmpty() ) {
+            } else if (!search.trim().isEmpty()) {
                 briefcaseFavorite = briefcaseFavoriteRepository.findById_UserIdAndBriefcase_TypeLikeAndBriefcase_TitleContaining(userId, type, search);
             } else {
                 briefcaseFavorite = briefcaseFavoriteRepository.findById_UserId(userId);
@@ -385,6 +385,8 @@ public class BriefcaseService {
         try {
             var briefcase = briefcaseRepository.findById(id);
             if (briefcase.isPresent()) {
+                var rating = ratingAvg(briefcase.get().getId());
+                rating.ifPresent(briefcase.get()::setRating);
                 return new ResponseEntity<>(briefcaseMapper.toResponseDto(briefcase.get()), HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
