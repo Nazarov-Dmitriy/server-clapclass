@@ -33,8 +33,8 @@ public class ArticleController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<?> list(@RequestParam(required = false) String sort, @RequestParam(required = false) String search, @RequestParam(required = false) TypeArticle type, @RequestParam(required = false) Long limit) {
-        return articleService.list(sort, search, type, limit);
+    public ResponseEntity<?> list(@RequestParam(required = false) String sort, @RequestParam(required = false) String search, @RequestParam(required = false) TypeArticle type, @RequestParam(required = false) Long limit ,@RequestParam(required = false) Boolean enablePublished) {
+        return articleService.list(sort, search, type, limit, enablePublished);
     }
 
     @GetMapping("/list/favorite")
@@ -84,5 +84,11 @@ public class ArticleController {
     @GetMapping("/favorite")
     public ResponseEntity<?> getArticleFavorite(@RequestParam Long article_id, @RequestParam Long user_id) {
         return articleService.getArticleFavorite(article_id, user_id);
+    }
+
+    //    @Secured({"ADMIN", "MODERATOR"})
+    @PutMapping("/published/{id}")
+    public ResponseEntity<?> setPublished(@PathVariable Long id) {
+        return articleService.setPublished(id);
     }
 }

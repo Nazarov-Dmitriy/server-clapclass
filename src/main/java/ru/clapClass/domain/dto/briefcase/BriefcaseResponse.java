@@ -26,6 +26,7 @@ public class BriefcaseResponse implements Serializable {
     String author;
     String duration;
     TypeWarmUp type;
+    boolean published;
     int shows;
     double rating;
     FileModelDto preview_img;

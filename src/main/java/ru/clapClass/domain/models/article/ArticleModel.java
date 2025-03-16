@@ -2,6 +2,7 @@ package ru.clapClass.domain.models.article;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import ru.clapClass.domain.models.article.favorite.ArticleFavorite;
 import ru.clapClass.domain.models.base.BaseEntity;
 import ru.clapClass.domain.models.file.FileModel;
@@ -24,6 +25,10 @@ public class ArticleModel extends BaseEntity {
 
     @Column(name = "title", nullable = false)
     private String title;
+
+    @Column(name = "published", nullable = false)
+    @ColumnDefault("false")
+    private boolean published;
 
     @Lob
     @Column(name = "article", nullable = false, columnDefinition = "LONGTEXT")

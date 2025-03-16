@@ -22,6 +22,7 @@ public class ArticleResponse implements Serializable {
     private int shows;
     private int likes;
     private TypeArticle type;
+    private boolean published;
     @JsonFormat(pattern = "dd.MM.yyyy")
     private LocalDateTime createdAt;
     @JsonFormat(pattern = "dd.MM.yyyy")

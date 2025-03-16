@@ -32,8 +32,8 @@ public class BriefcaseController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<?> list(@RequestParam(required = false) String sort, @RequestParam(required = false) String search, @RequestParam(required = false) TypeWarmUp type, @RequestParam(required = false) Long limit) {
-        return briefcaseService.list(sort, search, type, limit);
+    public ResponseEntity<?> list(@RequestParam(required = false) String sort, @RequestParam(required = false) String search, @RequestParam(required = false) TypeWarmUp type, @RequestParam(required = false) Long limit ,@RequestParam(required = false) Boolean enablePublished) {
+        return briefcaseService.list(sort, search, type, limit, enablePublished);
     }
 
     @GetMapping("/list/favorite")
@@ -122,5 +122,11 @@ public class BriefcaseController {
     @GetMapping("/rating")
     public ResponseEntity<?> getRating(@RequestParam Long briefcase_id, @RequestParam Long user_id) {
         return briefcaseService.getRating(briefcase_id, user_id);
+    }
+
+    //    @Secured({"ADMIN", "MODERATOR"})
+    @PutMapping("/published/{id}")
+    public ResponseEntity<?> setPublished(@PathVariable Long id) {
+        return briefcaseService.setPublished(id);
     }
 }

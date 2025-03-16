@@ -119,7 +119,7 @@ public class BriefcaseService {
     }
 
 
-    public ResponseEntity<?> list(String sort, String search, TypeWarmUp type, Long limit) {
+    public ResponseEntity<?> list(String sort, String search, TypeWarmUp type, Long limit, Boolean enablePublished) {
         try {
             var list = new ArrayList<BriefcaseResponse>();
             var sortParam = sort != null && sort.equals("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
@@ -128,12 +128,14 @@ public class BriefcaseService {
                     .withIgnoreCase()
                     .withMatcher("title", contains().ignoreCase())
                     .withIgnoreNullValues()
-                    .withIgnorePaths("annotation", "description", "author", "duration", "shows", "rating");
+                    .withIgnorePaths("annotation", "description", "author", "duration", "shows", "rating",
+                            enablePublished != null && enablePublished ? "published" : "");
 
             var filters = BriefcaseModel
                     .builder()
                     .title(search)
                     .type(type)
+                    .published(true)
                     .build();
 
             if (limit != null) {
@@ -163,26 +165,38 @@ public class BriefcaseService {
     public ResponseEntity<?> listFavorite(Long userId, String search, TypeWarmUp type) {
         try {
             var list = new ArrayList<BriefcaseResponse>();
-            Optional<List<BriefcaseFavorite>> briefcaseFavorite;
-            if (!search.trim().isEmpty() && type == null) {
-                briefcaseFavorite = briefcaseFavoriteRepository.findById_UserIdAndBriefcase_TitleContaining(userId, search);
-            } else if (type != null && search.trim().isEmpty()) {
-                briefcaseFavorite = briefcaseFavoriteRepository.findById_UserIdAndBriefcase_TypeLike(userId, type);
-            } else if (!search.trim().isEmpty()) {
-                briefcaseFavorite = briefcaseFavoriteRepository.findById_UserIdAndBriefcase_TypeLikeAndBriefcase_TitleContaining(userId, type, search);
-            } else {
-                briefcaseFavorite = briefcaseFavoriteRepository.findById_UserId(userId);
+            var pk = new BriefcaseFavoriteKey();
+            pk.setUserId(userId);
+
+            ExampleMatcher matcher = ExampleMatcher
+                    .matchingAll()
+                    .withIgnoreCase()
+                    .withMatcher("briefcase.title", contains().ignoreCase())
+                    .withIgnoreNullValues()
+                    .withIgnorePaths("briefcase.annotation", "briefcase.description", "briefcase.author", "briefcase.duration", "briefcase.shows", "briefcase.rating");
+
+            var filtersBriefcaseModel = BriefcaseModel
+                    .builder()
+                    .title(search)
+                    .type(type)
+                    .published(true)
+                    .build();
+
+            var filters = BriefcaseFavorite
+                    .builder().id(pk)
+                    .briefcase(filtersBriefcaseModel)
+                    .build();
+
+            var briefcaseFavorite = briefcaseFavoriteRepository.findAll(Example.of(filters, matcher));
+            for (var item : briefcaseFavorite) {
+                var rating = ratingAvg(item.getBriefcase().getId());
+                var briefcase = item.getBriefcase();
+                rating.ifPresent(briefcase::setRating);
+                list.add(briefcaseMapper.toResponseDto(briefcase));
             }
 
-            if (briefcaseFavorite.isPresent()) {
-                for (var item : briefcaseFavorite.get()) {
-                    var rating = ratingAvg(item.getBriefcase().getId());
-                    var briefcase = item.getBriefcase();
-                    rating.ifPresent(briefcase::setRating);
-                    list.add(briefcaseMapper.toResponseDto(briefcase));
-                }
-            }
             return new ResponseEntity<>(list, HttpStatus.OK);
+
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -487,6 +501,19 @@ public class BriefcaseService {
             return favorite.map(briefcaseRating -> new ResponseEntity<>(briefcaseRating.getRating(), HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(0, HttpStatus.OK));
         } catch (Exception e) {
             throw new InternalServerError("error", e.getMessage());
+        }
+    }
+
+    public ResponseEntity<?> setPublished(Long id) {
+        try {
+            var briefcase = briefcaseRepository.findById(id);
+            if (briefcase.isPresent()) {
+                briefcase.get().setPublished(!briefcase.get().isPublished());
+                briefcaseRepository.save(briefcase.get());
+            }
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            throw new InternalServerError("Error");
         }
     }
 }

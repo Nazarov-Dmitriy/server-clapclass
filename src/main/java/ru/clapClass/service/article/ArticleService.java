@@ -112,7 +112,7 @@ public class ArticleService {
         }
     }
 
-    public ResponseEntity<?> list(String sort, String search, TypeArticle type, Long limit) {
+    public ResponseEntity<?> list(String sort, String search, TypeArticle type, Long limit, Boolean enablePublished) {
         try {
             var list = new ArrayList<ArticleResponse>();
             var sortParam = sort != null && sort.equals("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
@@ -121,12 +121,13 @@ public class ArticleService {
                     .withIgnoreCase()
                     .withMatcher("title", contains().ignoreCase())
                     .withIgnoreNullValues()
-                    .withIgnorePaths("shows", "likes");
+                    .withIgnorePaths("shows", "likes", enablePublished != null &&  enablePublished? "published" : "" );
 
             var filters = ArticleModel
                     .builder()
                     .title(search)
                     .type(type)
+                    .published(true)
                     .build();
 
             if (limit != null) {
@@ -165,6 +166,7 @@ public class ArticleService {
                     .builder()
                     .title(search)
                     .type(type)
+                    .published(true)
                     .build();
 
             var filters = ArticleFavorite
@@ -234,8 +236,9 @@ public class ArticleService {
         CriteriaQuery<ArticleModel> q = cb.createQuery(ArticleModel.class);
         Root<ArticleModel> c = q.from(ArticleModel.class);
         Predicate p1 = cb.not(c.get("id").in(id));
+        Predicate p2 = cb.not(c.get("published").in(false));
         Order order = cb.asc(cb.function("RAND", null));
-        q.select(c).where(p1).orderBy(order);
+        q.select(c).where(p1, p2).orderBy(order);
         var results = em.createQuery(q).setMaxResults(limit).getResultList().stream().map(articleMapper::toArticleResponse);
         return new ResponseEntity<>(results, HttpStatus.OK);
     }
@@ -279,6 +282,19 @@ public class ArticleService {
             }
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public ResponseEntity<?> setPublished(Long id) {
+        try {
+            var article = articleRepository.findById(id);
+            if (article.isPresent()) {
+                article.get().setPublished(!article.get().isPublished());
+                articleRepository.save(article.get());
+            }
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            throw new InternalServerError("Error");
         }
     }
 }

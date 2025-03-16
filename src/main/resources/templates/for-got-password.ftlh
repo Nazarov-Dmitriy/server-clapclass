@@ -191,42 +191,42 @@
     <title></title>
 </head>
 <body style="width: 100% !important; min-width: 100%; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; color: #222222; font-family: Helvetica, Arial, sans-serif; font-weight: normal; font-size: 14px; text-align: left; line-height: 1.3; background: #fafafa repeat center top; margin: 0; padding: 0;"
-      bgcolor="#fafafa">
+>
 <table class="mail"
        style="border-spacing: 0; border-collapse: collapse; vertical-align: top; text-align: left; height: 100%; width: 100%; color: #222222; font-family: Helvetica, Arial, sans-serif; font-weight: normal; font-size: 14px; line-height: 1.3; background: #fafafa repeat center top; margin: 0; padding: 0;"
-       bgcolor="#fafafa">
+>
     <tbody>
-    <tr style="vertical-align: top; text-align: left; padding: 0;" align="left">
-        <td align="center" class="center" valign="top"
+    <tr style="vertical-align: top; text-align: left; padding: 0;">
+        <td class="center"
             style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: center; color: #222222; font-family: Helvetica, Arial, sans-serif; font-weight: normal; font-size: 14px; margin: 0; padding: 0;">
             <div style="width: 100%; min-width: 580px; text-align: center;">
                 <table class="container"
                        style="border-spacing: 0; border-collapse: collapse; vertical-align: top; text-align: inherit; max-width: 580px; margin: 0 auto; padding: 0;">
                     <tbody>
-                    <tr style="vertical-align: top; text-align: left; padding: 0;" align="left">
+                    <tr style="vertical-align: top; text-align: left; padding: 0;">
                         <td style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; color: #222222; font-family: Helvetica, Arial, sans-serif; font-weight: normal; font-size: 14px; margin: 0; padding: 0;"
-                            align="left" valign="top">
+                        >
                             <table class="row"
                                    style="border-spacing: 0; border-collapse: collapse; vertical-align: top; text-align: left; width: 100%; position: relative; display: block; background: transparent repeat center top; padding: 0px;"
-                                   bgcolor="transparent">
+                            >
                                 <tbody>
-                                <tr style="vertical-align: top; text-align: left; padding: 0;" align="left">
+                                <tr style="vertical-align: top; text-align: left; padding: 0;">
                                     <td class="wrapper first last"
                                         style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; position: relative; color: #222222; font-family: Helvetica, Arial, sans-serif; font-weight: normal; font-size: 14px; margin: 0; padding: 0px;"
-                                        align="left" valign="top">
+                                    >
                                         <table class="twelve columns"
                                                style="border-spacing: 0; border-collapse: collapse; vertical-align: top; text-align: left; width: 580px; margin: 0 auto; padding: 0;">
                                             <tbody>
-                                            <tr style="vertical-align: top; text-align: left; padding: 0;" align="left">
+                                            <tr style="vertical-align: top; text-align: left; padding: 0;">
                                                 <td style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; width: 100%; color: #222222; font-family: Helvetica, Arial, sans-serif; font-weight: normal; font-size: 14px; margin: 0; padding: 0px;"
-                                                    align="left" valign="top">
+                                                >
                                                     <table style="width: 100%; border-spacing: 0; border-collapse: collapse; vertical-align: top; text-align: left; padding: 0;">
                                                         <tbody>
                                                         <tr style="vertical-align: top; text-align: left; padding: 0;"
-                                                            align="left">
+                                                        >
                                                             <td class=""
                                                                 style="font-size: 1px; line-height: 0; word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; width: 100%; color: #222222; font-family: Helvetica, Arial, sans-serif; font-weight: normal; background: transparent repeat center center; margin: 0; padding: 20px 0px 0px;"
-                                                                align="left" bgcolor="transparent" valign="top">&nbsp;
+                                                            >&nbsp;
                                                             </td>
                                                         </tr>
                                                         </tbody>
@@ -236,7 +236,7 @@
                                                 </td>
                                                 <td class="expander"
                                                     style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; width: 100%; visibility: hidden; color: #222222; font-family: Helvetica, Arial, sans-serif; font-weight: normal; font-size: 14px; margin: 0; padding: 0;"
-                                                    align="left" valign="top"></td>
+                                                ></td>
                                             </tr>
                                             </tbody>
                                         </table>
@@ -253,43 +253,44 @@
                 <table class="container"
                        style="border-spacing: 0; border-collapse: collapse; vertical-align: top; text-align: inherit; max-width: 580px; margin: 0 auto; padding: 0;">
                     <tbody>
-                    <tr style="vertical-align: top; text-align: left; padding: 0;" align="left">
+                    <tr style="vertical-align: top; text-align: left; padding: 0;">
                         <td style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; color: #222222; font-family: Helvetica, Arial, sans-serif; font-weight: normal; font-size: 14px; margin: 0; padding: 0;"
-                            align="left" valign="top">
+                        >
                             <table class="row"
                                    style="border-radius: 11px; -webkit-border-radius: 11px; -moz-border-radius: 11px; border-spacing: 0; border-collapse: collapse; vertical-align: top; text-align: left; width: 100%; position: relative; display: block; background: #ffffff repeat center top; padding: 5px 0;"
-                                   bgcolor="#ffffff">
+                                  >
                                 <tbody>
-                                <tr style="vertical-align: top; text-align: left; padding: 0;" align="left">
+                                <tr style="vertical-align: top; text-align: left; padding: 0;">
                                     <td class="wrapper first last"
                                         style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; position: relative; color: #222222; font-family: Helvetica, Arial, sans-serif; font-weight: normal; font-size: 14px; margin: 0; padding: 0px;"
-                                        align="left" valign="top">
+                                    >
                                         <table class="twelve columns"
                                                style="border-spacing: 0; border-collapse: collapse; vertical-align: top; text-align: left; width: 580px; margin: 0 auto; padding: 0;">
                                             <tbody>
-                                            <tr style="vertical-align: top; text-align: left; padding: 0;" align="left">
+                                            <tr style="vertical-align: top; text-align: left; padding: 0;">
                                                 <td style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; width: 100%; color: #222222; font-family: Helvetica, Arial, sans-serif; font-weight: normal; font-size: 14px; margin: 0; padding: 0px;"
-                                                    align="left" valign="top">
-                                                    <table class="table-block" width="100%"
+                                                >
+                                                    <table class="table-block"
                                                            style="border-spacing: 0; border-collapse: collapse; vertical-align: top; text-align: left; padding: 0;">
                                                         <tbody>
                                                         <tr style="vertical-align: top; text-align: left; padding: 0;"
-                                                            align="left">
+                                                        >
                                                             <td class=""
                                                                 style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; width: 100%; color: #222222; font-family: Helvetica, Arial, sans-serif; font-weight: normal; font-size: 14px; background: transparent repeat center center; margin: 0; padding: 0 10px;"
-                                                                align="left" bgcolor="transparent" valign="top">
+                                                            >
                                                                 <p style="text-align: left; color: #222222; font-family: Helvetica, Arial, sans-serif; font-weight: normal; font-size: 14px; line-height: 1.3; margin: 0 0 10px; padding: 0;"
-                                                                   align="left"><span
+                                                                ><span
                                                                             style="font-size: 20px; font-family: Arial, sans-serif;"><strong>Восстановление пароля</strong></span>
                                                                 </p>
                                                                 <p style="text-align: left; color: #222222; font-family: Helvetica, Arial, sans-serif; font-weight: normal; font-size: 14px; line-height: 1.3; margin: 0 0 10px; padding: 0;"
-                                                                   align="left"><span style="font-size: 18px;">Вы успешно востановили пароль.</span>
+                                                                ><span style="font-size: 18px;">Вы успешно востановили пароль.</span>
                                                                 </p>
                                                                 <p style="text-align: left; color: #222222; font-family: Helvetica, Arial, sans-serif; font-weight: normal; font-size: 14px; line-height: 1.3; margin: 0 0 10px; padding: 0;"
-                                                                   align="left"><span style="font-size: 18px;">Новый пароль: ${password}</span><br>&nbsp;<br>&nbsp;
+                                                                >
+                                                                    <span style="font-size: 18px;">Новый пароль: ${password}</span><br>&nbsp;<br>&nbsp;
                                                                 </p>
                                                                 <p style="text-align: left; color: #222222; font-family: Helvetica, Arial, sans-serif; font-weight: normal; font-size: 14px; line-height: 1.3; margin: 0 0 10px; padding: 0;"
-                                                                   align="left">&nbsp;</p>
+                                                                >&nbsp;</p>
                                                             </td>
                                                         </tr>
                                                         </tbody>
@@ -299,7 +300,7 @@
                                                 </td>
                                                 <td class="expander"
                                                     style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; width: 100%; visibility: hidden; color: #222222; font-family: Helvetica, Arial, sans-serif; font-weight: normal; font-size: 14px; margin: 0; padding: 0;"
-                                                    align="left" valign="top"></td>
+                                                ></td>
                                             </tr>
                                             </tbody>
                                         </table>

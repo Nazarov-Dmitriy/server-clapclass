@@ -2,6 +2,7 @@ package ru.clapClass.domain.models.briefcase;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import ru.clapClass.domain.enums.TypeWarmUp;
 import ru.clapClass.domain.models.base.BaseEntity;
 import ru.clapClass.domain.models.briefcase.favorite.BriefcaseFavorite;
@@ -31,6 +32,10 @@ public class BriefcaseModel extends BaseEntity {
     @Lob
     @Column(name = "annotation", columnDefinition = "MEDIUMTEXT")
     private String annotation;
+
+    @Column(name = "published", nullable = false)
+    @ColumnDefault("false")
+    private boolean published;
 
     @Lob
     @Column(name = "description", nullable = false, columnDefinition = "LONGTEXT")
