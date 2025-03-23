@@ -1,13 +1,11 @@
 package ru.clapClass.domain.dto.auth;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
+import ru.clapClass.domain.models.user.Role;
 
 @Data
 @AllArgsConstructor
@@ -50,6 +48,12 @@ public class UserRequest {
 
     private MultipartFile avatar;
 
+    @NotNull(message = "Поле не должно быть пустым", groups = {ChangeRole.class})
+    private Role role;
+
+    @NotNull(message = "Поле не должно быть пустым", groups = {ChangeRole.class})
+    private Long user_id;
+
     /**
      * Группа проверок для регистрации
      */
@@ -84,6 +88,12 @@ public class UserRequest {
      * Группа проверок для восстановления пароля
      */
     public interface Subscribe {
+    }
+
+    /**
+     * Группа проверок для восстановления пароля
+     */
+    public interface ChangeRole {
     }
 }
 

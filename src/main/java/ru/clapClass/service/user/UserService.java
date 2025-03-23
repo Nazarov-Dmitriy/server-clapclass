@@ -10,11 +10,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.clapClass.domain.dto.auth.AuthenticationResponse;
 import ru.clapClass.domain.dto.auth.UserRequest;
+import ru.clapClass.domain.dto.auth.UserResponse;
 import ru.clapClass.domain.mapper.UserMapper;
+import ru.clapClass.domain.models.briefcase.raiting.BriefcaseRatingKey;
 import ru.clapClass.domain.models.user.User;
 import ru.clapClass.exception.BadRequest;
 import ru.clapClass.exception.InternalServerError;
 import ru.clapClass.repository.UserRepository;
+import ru.clapClass.repository.briefcase.BriefcaseRatingRepository;
 import ru.clapClass.security.JwtUser;
 import ru.clapClass.service.mail.EmailService;
 import ru.clapClass.service.s3.ServiceS3;
@@ -22,6 +25,7 @@ import ru.clapClass.utils.FileCreate;
 import ru.clapClass.utils.HeaderToken;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Random;
 
@@ -34,6 +38,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final ServiceS3 serviceS3;
+    private final BriefcaseRatingRepository briefcaseRatingRepository;
 
     @Autowired
     EmailService emailService;
@@ -122,13 +127,13 @@ public class UserService {
     public ResponseEntity<?> addAvatar(UserRequest req) {
         try {
             Optional<User> user = repository.findByEmail(req.getEmail());
-            if (user.isPresent() ) {
+            if (user.isPresent()) {
                 var path = "avatar/" + user.get().getId() + "/" + req.getAvatar().getOriginalFilename();
                 if (user.get().getAvatar() != null) {
                     serviceS3.deleteObject(user.get().getAvatar().getPath());
                 }
                 serviceS3.putObject(path, req.getAvatar());
-                var file = FileCreate.addFileS3(req.getAvatar(),path);
+                var file = FileCreate.addFileS3(req.getAvatar(), path);
                 user.get().setAvatar(file);
                 repository.save(user.get());
                 assert file != null;
@@ -167,6 +172,40 @@ public class UserService {
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public ResponseEntity<?> getUserList() {
+        var list = new ArrayList<UserResponse>();
+        var users = repository.findAll();
+        for (var item : users) {
+            list.add(userMapper.toUserResponse(item));
+        }
+        return new ResponseEntity<>(list, HttpStatus.OK);
+
+    }
+
+    public ResponseEntity<?> setUserRole(UserRequest body) {
+        try {
+            var user = repository.findById(body.getUser_id());
+            user.ifPresent(value -> value.setRole(body.getRole()));
+            user.ifPresent(repository::save);
+            return new ResponseEntity<>(HttpStatus.OK);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public ResponseEntity<?> removeUser(Long id) {
+        try {
+            var user = repository.findById(id);
+            var raiting = briefcaseRatingRepository.findByUser_Id(id);
+            raiting.ifPresent(briefcaseRatingRepository::deleteAll);
+            user.ifPresent(repository::delete);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

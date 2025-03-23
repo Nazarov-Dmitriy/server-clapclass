@@ -13,12 +13,8 @@ public class FileCreate {
             try {
                 long fileLength = file.getSize();
                 String name = file.getOriginalFilename();
-
-                FolderCreate.createFolder(String.valueOf(path));
                 createFile(file, String.valueOf(path), name);
-
                 var fullPath = path.append(name);
-
                 return FileModel.builder().name(name)
                         .path(String.valueOf(fullPath)).size(fileLength).build();
             } catch (Exception e) {

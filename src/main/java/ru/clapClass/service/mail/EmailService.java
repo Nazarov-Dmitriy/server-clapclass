@@ -44,7 +44,7 @@ public class EmailService {
     @Value("${url-frontend}")
     private String urlFrontend;
 
-    public void sendSimpleEmail(Map<String, String> params, MultipartFile file) {
+    public void sendSimpleEmail(Map<String, String> params, MultipartFile file, List<MultipartFile> files) {
         try {
             MimeMessage mimeMessage = emailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
@@ -55,6 +55,16 @@ public class EmailService {
             helper.setText(emailContent, true);
             if (file != null) {
                 helper.addAttachment(Objects.requireNonNull(file.getOriginalFilename()), file);
+            }
+
+            if ( files != null && !files.isEmpty()) {
+                files.forEach(file1 -> {
+                    try {
+                        helper.addAttachment(Objects.requireNonNull(file1.getOriginalFilename()), file1);
+                    } catch (MessagingException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
             }
 
             emailSender.send(mimeMessage);
@@ -80,7 +90,7 @@ public class EmailService {
             params.put("link_img", url);
             params.put("template", "register.ftlh");
             params.put("link_sait", urlFrontend.split(",")[0]);
-            sendSimpleEmail(params, null);
+            sendSimpleEmail(params, null, null);
         } catch (Exception e) {
             throw new InternalServerError(e.getMessage());
         }
@@ -93,7 +103,7 @@ public class EmailService {
             params.put("subject", "Восстановление пароля");
             params.put("password", password);
             params.put("template", "for-got-password.ftlh");
-            sendSimpleEmail(params, null);
+            sendSimpleEmail(params, null, null);
             ResponseEntity.ok().build();
         } catch (Exception e) {
             throw new InternalServerError(e.getMessage());
@@ -110,14 +120,14 @@ public class EmailService {
             params.put("email_user", req.email());
             params.put("question", req.question());
             params.put("template", "faq.ftlh");
-            sendSimpleEmail(params, null);
+            sendSimpleEmail(params, null, null);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             throw new BadRequest("ошибка данных", "error");
         }
     }
 
-    public ResponseEntity<?> offerMaterial(OfferMaterialRequest req, MultipartFile file) {
+    public ResponseEntity<?> offerMaterial(OfferMaterialRequest req, List<MultipartFile> files) {
         try {
             Map<String, String> params = new HashMap<>();
             params.put("email", username);
@@ -127,7 +137,7 @@ public class EmailService {
             params.put("title", req.getTitle());
             params.put("type", req.getType());
             params.put("template", "offer_material.ftlh");
-            sendSimpleEmail(params, file);
+            sendSimpleEmail(params, null,  files);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             throw new BadRequest("ошибка данных", "error");
@@ -146,7 +156,7 @@ public class EmailService {
                             params.put("title", article.getTitle());
                             params.put("template", "material.ftlh");
                             params.put("link_sait", url);
-                            sendSimpleEmail(params, null);
+                            sendSimpleEmail(params, null, null);
                         } catch (Exception e) {
                             throw new InternalServerError(e.getMessage());
                         }
@@ -165,7 +175,7 @@ public class EmailService {
             params.put("phone", req.phone());
             params.put("question", req.textarea());
             params.put("template", "message_theme.ftlh");
-            sendSimpleEmail(params, null);
+            sendSimpleEmail(params, null, null);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             throw new BadRequest("ошибка данных", "error");

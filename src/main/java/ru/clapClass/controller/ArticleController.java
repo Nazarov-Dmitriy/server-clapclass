@@ -3,6 +3,7 @@ package ru.clapClass.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +18,7 @@ import ru.clapClass.service.article.ArticleService;
 public class ArticleController {
     private final ArticleService articleService;
 
+    @Secured({"admin"})
     @PostMapping(path = "/add")
     public ResponseEntity<?> addArticle(@Validated ArticleRequest req, MultipartFile file) {
         return articleService.addArticle(req, file);
@@ -27,6 +29,7 @@ public class ArticleController {
         return articleService.getArticle(id);
     }
 
+    @Secured({"admin", "moderator"})
     @PutMapping(path = "/edit")
     public ResponseEntity<?> editArticle(@Validated ArticleRequest req, MultipartFile file) {
         return articleService.editArticle(req, file);
@@ -46,6 +49,7 @@ public class ArticleController {
         return articleService.listFavorite(user_id,  search , type , sort);
     }
 
+    @Secured({"admin", "moderator"})
     @GetMapping("/remove/{id}")
     public ResponseEntity<?> removeArticle(@PathVariable Long id) {
         return articleService.remove(id);
@@ -86,7 +90,7 @@ public class ArticleController {
         return articleService.getArticleFavorite(article_id, user_id);
     }
 
-    //    @Secured({"ADMIN", "MODERATOR"})
+    @Secured({"admin", "moderator"})
     @PutMapping("/published/{id}")
     public ResponseEntity<?> setPublished(@PathVariable Long id) {
         return articleService.setPublished(id);

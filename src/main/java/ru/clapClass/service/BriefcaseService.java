@@ -415,8 +415,9 @@ public class BriefcaseService {
         CriteriaQuery<BriefcaseModel> q = cb.createQuery(BriefcaseModel.class);
         Root<BriefcaseModel> c = q.from(BriefcaseModel.class);
         Predicate p1 = cb.not(c.get("id").in(id));
+        Predicate p2 = cb.not(c.get("published").in(false));
         Order order = cb.asc(cb.function("RAND", null));
-        q.select(c).where(p1).orderBy(order);
+        q.select(c).where(p1, p2).orderBy(order);
         var results = em.createQuery(q).setMaxResults(limit).getResultList().stream().map(briefcaseMapper::toResponseDto);
         return new ResponseEntity<>(results, HttpStatus.OK);
     }

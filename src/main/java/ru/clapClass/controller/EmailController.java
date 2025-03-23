@@ -13,6 +13,8 @@ import ru.clapClass.domain.dto.email.OfferMaterialRequest;
 import ru.clapClass.domain.dto.email.SendThemeRequest;
 import ru.clapClass.service.mail.EmailService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("send-mail")
 @RequiredArgsConstructor
@@ -25,8 +27,8 @@ public class EmailController {
     }
 
     @PostMapping(path = "/offer-material")
-    public ResponseEntity<?> offerMaterial(@Validated OfferMaterialRequest req, MultipartFile file) {
-        return emailService.offerMaterial(req, file);
+    public ResponseEntity<?> offerMaterial(@Validated OfferMaterialRequest req, List<MultipartFile> files) {
+        return emailService.offerMaterial(req, files);
     }
 
     @PostMapping(path = "/theme")

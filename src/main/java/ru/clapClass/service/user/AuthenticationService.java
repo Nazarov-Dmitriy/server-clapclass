@@ -52,7 +52,6 @@ public class AuthenticationService {
 
     public AuthenticationResponse signIn(UserRequest request) {
         var user = customerUserDetailsService.loadUserByUsername(request.getEmail());
-
         if (user == null) {
             throw new BadRequest("Пользователь не найден", "user");
         }

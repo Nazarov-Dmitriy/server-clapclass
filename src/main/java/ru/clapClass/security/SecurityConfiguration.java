@@ -1,5 +1,6 @@
 package ru.clapClass.security;
 
+import jakarta.servlet.DispatcherType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
@@ -27,7 +29,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
+@EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
 @RequiredArgsConstructor
 public class SecurityConfiguration {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -37,16 +39,19 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         String[] requestAll = {"/auth/**", "/files/**", "/article-files/**", "/images/**", "/article/**", "/send-mail/**", "/social/list", "/reviews/list"};
-        String[] requestGet = {"/article/remove", "/article/remove/", "/social/remove/", "/reviews/remove/", "/briefcase/list", "/briefcase/remove/", "/briefcase/favorite/**" };
-        String[] requestPost = { "/user/for-got-password"};
+        String[] requestGet = {"/article/remove", "/article/remove/", "/social/remove/", "/reviews/remove/", "/briefcase/list", "/briefcase/remove/", "/briefcase/favorite/**"};
+        String[] requestPost = {"/user/for-got-password"};
         String[] requestPostAuthenticated = {"/send-mail/**", "/article/**", "/briefcase/**", "/auth/**", "/user/for-got-password", "/user/subscribe", "/social/**",
                 "/briefcase/**"};
         String[] requestPut = {"/article/**", "/webinar/**", "/social/**", "/briefcase/**", "/reviews/**",};
 
+        AuthenticationEntryPoint jwtAuthenticationEntryPoint;
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(request ->
-                        request.requestMatchers(requestAll).permitAll()
+                        request
+                                .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR, DispatcherType.INCLUDE).permitAll()
+                                .requestMatchers(requestAll).permitAll()
                                 .requestMatchers(HttpMethod.GET, requestGet)
                                 .authenticated()
                                 .requestMatchers(HttpMethod.POST, requestPost)
@@ -54,8 +59,7 @@ public class SecurityConfiguration {
                                 .requestMatchers(HttpMethod.POST, requestPostAuthenticated)
                                 .authenticated()
                                 .requestMatchers(HttpMethod.PUT, requestPut).authenticated()
-//                                .requestMatchers("/reviews/**").hasAnyRole("ADMIN", "MODERATOR")
-                                .requestMatchers("/endpoint", "/admin/**").hasRole("ADMIN")
+                                .requestMatchers( "/admin/**").hasAuthority("admin")
                                 .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider())
@@ -83,7 +87,7 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173", "http://192.168.0.7:5173","http://clapclass.i99620sd.beget.tech"));
+        corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173", "http://192.168.0.7:5173", "http://clapclass.i99620sd.beget.tech"));
         corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setAllowedHeaders(List.of("*"));
